@@ -1,3 +1,4 @@
+# StylenCut
 # BarberFlow
 
 A modern, boutique grooming application built with Flutter. BarberFlow offers a seamless experience for clients to book appointments and for barbers/admins to manage their daily schedules.
