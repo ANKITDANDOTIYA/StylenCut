@@ -327,13 +327,9 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
+              border: Border(
+                top: BorderSide(color: Colors.grey.shade200),
+              ),
             ),
             child: Row(
               children: [

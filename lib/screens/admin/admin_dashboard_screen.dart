@@ -51,13 +51,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.08)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,13 +135,7 @@ class AdminDashboardScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.08)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.02),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+
                   ),
                   child: ListTile(
                     leading: CircleAvatar(

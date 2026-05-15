@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/onboarding/onboarding_screen.dart';
+import 'package:barber_flow/screens/admin/admin_dashboard_screen.dart';
+import 'package:barber_flow/screens/main_screen.dart';
+import '../../services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,8 +16,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
+    Future.delayed(const Duration(seconds: 3), () async {
+      final token = await AuthService.getToken();
+      final role = await AuthService.getRole();
+      
+      if (!mounted) return;
+
+      if (token != null) {
+        if (role == 'admin') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const MainScreen()),
+          );
+        }
+      } else {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const OnboardingScreen()),
         );

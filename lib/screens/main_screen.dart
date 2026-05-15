@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/home_screen.dart';
 import 'package:barber_flow/screens/user/my_bookings_screen.dart';
 import 'package:barber_flow/screens/admin/admin_main_screen.dart';
+import 'package:barber_flow/services/auth_service.dart';
+import 'package:barber_flow/screens/auth/login_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -34,6 +36,23 @@ class _MainScreenState extends State<MainScreen> {
                   );
                 },
                 child: const Text('Go to Admin Panel'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  await AuthService.logout();
+                  if (context.mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Logout'),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:barber_flow/screens/main_screen.dart';
+import 'package:barber_flow/screens/auth/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -47,9 +47,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // Navigate to Home
+      // Navigate to Login
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MainScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
@@ -228,9 +228,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Navigate to Home
+                            // Navigate to Login
                             Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const MainScreen()),
+                              MaterialPageRoute(builder: (_) => const LoginScreen()),
                             );
                           },
                           child: Text(
