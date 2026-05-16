@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../services/auth_service.dart';
 import 'signup_screen.dart';
-import '../admin/admin_dashboard_screen.dart';
+import '../admin/admin_main_screen.dart';
 import '../main_screen.dart'; 
 
 class LoginScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (role == 'admin') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
+          MaterialPageRoute(builder: (_) => const AdminMainScreen()),
         );
       } else {
         Navigator.pushReplacement(

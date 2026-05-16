@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/admin/admin_dashboard_screen.dart';
 import 'package:barber_flow/screens/admin/admin_today_bookings_screen.dart';
 import 'package:barber_flow/screens/admin/admin_manage_barbers_screen.dart';
+import 'package:barber_flow/screens/main_screen.dart';
 
 class AdminMainScreen extends StatefulWidget {
   const AdminMainScreen({super.key});
@@ -19,7 +20,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
     const AdminDashboardScreen(),
     const AdminTodayBookingsScreen(),
     const AdminManageBarbersScreen(), // Using as "Clients" or "Manage Barbers" tab
-    const Scaffold(body: Center(child: Text('Settings Here'))),
+    const _AdminSettingsScreen(),
   ];
 
   @override
@@ -62,6 +63,34 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
             label: 'Settings',
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AdminSettingsScreen extends StatelessWidget {
+  const _AdminSettingsScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Admin Settings')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Settings Data Here'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MainScreen()),
+                );
+              },
+              child: const Text('Go to User Panel'),
+            ),
+          ],
+        ),
       ),
     );
   }

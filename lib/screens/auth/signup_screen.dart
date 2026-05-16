@@ -15,6 +15,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _salonNameController = TextEditingController();
   String _selectedRole = 'user';
 
   Future<void> _signup() async {
@@ -24,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
       _emailController.text.trim(),
       _passwordController.text,
       _selectedRole,
+      salonName: _selectedRole == 'admin' ? _salonNameController.text.trim() : null,
     );
 
     if (success && mounted) {
@@ -111,6 +113,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   }
                 },
               ),
+              if (_selectedRole == 'admin') ...[
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _salonNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Salon Name',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: isLoading ? null : _signup,

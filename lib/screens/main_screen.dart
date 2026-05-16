@@ -15,6 +15,22 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  String _role = 'user';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRole();
+  }
+
+  Future<void> _loadRole() async {
+    final role = await AuthService.getRole();
+    if (mounted) {
+      setState(() {
+        _role = role ?? 'user';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +45,17 @@ class _MainScreenState extends State<MainScreen> {
             children: [
               const Text('Profile Data Here'),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AdminMainScreen()),
-                  );
-                },
-                child: const Text('Go to Admin Panel'),
-              ),
-              const SizedBox(height: 20),
+              if (_role == 'admin') ...[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const AdminMainScreen()),
+                    );
+                  },
+                  child: const Text('Go to Admin Panel'),
+                ),
+                const SizedBox(height: 20),
+              ],
               ElevatedButton(
                 onPressed: () async {
                   await AuthService.logout();

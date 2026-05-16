@@ -29,12 +29,17 @@ class AuthService {
     }
   }
 
-  static Future<Map<String, dynamic>> signup(String name, String email, String password, String role) async {
+  static Future<Map<String, dynamic>> signup(String name, String email, String password, String role, {String? salonName}) async {
     try {
+      final body = {'name': name, 'email': email, 'password': password, 'role': role};
+      if (salonName != null && salonName.isNotEmpty) {
+        body['salonName'] = salonName;
+      }
+      
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'name': name, 'email': email, 'password': password, 'role': role}),
+        body: jsonEncode(body),
       ).timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);

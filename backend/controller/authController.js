@@ -6,7 +6,7 @@ const { findUserByEmail, createUser } = require('../models/authModel');
 
 exports.signup = async (req, res) => {
     try {
-        const {email, password, name, role} = req.body;
+        const {email, password, name, role, salonName} = req.body;
 
         const existingUser = await findUserByEmail(email);
 
@@ -20,15 +20,24 @@ exports.signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await createUser(name, email, hashedPassword, role || 'user');
+        
+        let newSalon = null;
+        if (newUser.role === 'admin' && salonName) {
+            const { createSalon } = require('../models/salonModel');
+            newSalon = await createSalon(newUser.id, salonName);
+        }
+
         res.status(201).json({
             success: true,
             message: "User Created Successfully",   
-            user: newUser
+            user: newUser,
+            salon: newSalon
         });
         } catch(error){
             res.status(500).json({
                 success: false,
-                message: "Internal Server Error"
+                message: "Internal Server Error",
+                error: error.message
             });
         }
     };
