@@ -18,4 +18,49 @@ class SalonViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<Salon?> updateSalon(int salonId, int ownerId, String name, {String? address, String? phoneNumber, String? openingTime, String? closingTime, String? thumbnailPic}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final updated = await SalonService.updateSalon(salonId, ownerId, name, address: address, phoneNumber: phoneNumber, openingTime: openingTime, closingTime: closingTime, thumbnailPic: thumbnailPic);
+    
+    if (updated != null) {
+      final index = _salons.indexWhere((s) => s.id == salonId);
+      if (index != -1) {
+        _salons[index] = updated;
+      }
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return updated;
+  }
+
+  Future<List<dynamic>> fetchBarbers(int salonId) async {
+    return await SalonService.getBarbers(salonId);
+  }
+
+  Future<bool> createBarber(int salonId, String name, String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final barber = await SalonService.createBarber(salonId, name, email, password);
+
+    _isLoading = false;
+    notifyListeners();
+    
+    return barber != null;
+  }
+
+  Future<String?> uploadSalonThumbnail(String filePath) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final uploadedUrl = await SalonService.uploadThumbnail(filePath);
+
+    _isLoading = false;
+    notifyListeners();
+    return uploadedUrl;
+  }
 }

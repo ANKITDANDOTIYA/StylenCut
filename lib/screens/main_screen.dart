@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
               if (_role == 'admin') ...[
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (_) => const AdminMainScreen()),
                     );
                   },

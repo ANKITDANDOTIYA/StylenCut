@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/salon_details_screen.dart';
 import 'package:barber_flow/viewmodels/salon_viewmodel.dart';
-import 'package:barber_flow/models/salon.dart';
+// import 'package:barber_flow/models/salon.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -151,14 +151,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Image Placeholder
+                                    // Dynamic Image Preview
                                     Container(
                                       height: 160,
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade200,
                                         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                                        image: const DecorationImage(
-                                          image: NetworkImage('https://images.unsplash.com/photo-1521590832167-7bfc17484d8d?q=80&w=2070&auto=format&fit=crop'),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            salon.thumbnailPic != null && salon.thumbnailPic!.isNotEmpty
+                                                ? (salon.thumbnailPic!.startsWith('http')
+                                                    ? salon.thumbnailPic!
+                                                    : 'http://192.168.1.15:5000${salon.thumbnailPic}')
+                                                : 'https://images.unsplash.com/photo-1521590832167-7bfc17484d8d?q=80&w=2070&auto=format&fit=crop',
+                                          ),
                                           fit: BoxFit.cover,
                                         ),
                                       ),

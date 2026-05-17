@@ -7,6 +7,7 @@ class Salon {
   final bool isOpen;
   final String? openingTime;
   final String? closingTime;
+  final String? thumbnailPic;
   // TODO: Add ratings later
   final double rating;
 
@@ -19,6 +20,7 @@ class Salon {
     this.isOpen = true,
     this.openingTime,
     this.closingTime,
+    this.thumbnailPic,
     this.rating = 4.5, // Default for now until backend gives us ratings
   });
 
@@ -32,6 +34,7 @@ class Salon {
       isOpen: json['is_open'] ?? true,
       openingTime: json['opening_time'],
       closingTime: json['closing_time'],
+      thumbnailPic: json['thumbnail_pic'],
       rating: json['rating'] != null ? double.parse(json['rating'].toString()) : 4.5,
     );
   }

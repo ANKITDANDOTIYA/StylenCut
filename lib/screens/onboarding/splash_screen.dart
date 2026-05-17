@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/onboarding/onboarding_screen.dart';
-import 'package:barber_flow/screens/admin/admin_dashboard_screen.dart';
+import 'package:barber_flow/screens/admin/admin_main_screen.dart';
 import 'package:barber_flow/screens/main_screen.dart';
 import '../../services/auth_service.dart';
 
@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (token != null) {
         if (role == 'admin') {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
+            MaterialPageRoute(builder: (_) => const AdminMainScreen()),
           );
         } else {
           Navigator.of(context).pushReplacement(

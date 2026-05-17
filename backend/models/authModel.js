@@ -25,7 +25,36 @@ const createUser = async (name,
     return result.rows[0];
  };
 
- module.exports = {
+const getBarbersBySalon = async (salonId) => {
+    const result = await pool.query(
+        "SELECT id, name, email, role, salon_id FROM users WHERE salon_id = $1 AND role = 'barber'",
+        [salonId]
+    );
+    return result.rows;
+};
+
+const assignBarberToSalon = async (userId, salonId) => {
+    const result = await pool.query(
+        "UPDATE users SET salon_id = $1 WHERE id = $2 AND role = 'barber' RETURNING id, name, email, role, salon_id",
+        [salonId, userId]
+    );
+    return result.rows[0];
+};
+
+const createBarberUser = async (name, email, password, salonId) => {
+    const result = await pool.query(
+        `INSERT INTO users 
+        (name, email, password, role, salon_id)
+        VALUES ($1, $2, $3, 'barber', $4) RETURNING id, name, email, role, salon_id`,
+        [name, email, password, salonId]
+    );
+    return result.rows[0];
+};
+
+module.exports = {
     findUserByEmail,
     createUser,
- };
+    getBarbersBySalon,
+    assignBarberToSalon,
+    createBarberUser,
+};
