@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const authRoutes =
 require("./routes/authRoutes");
+const salonRoutes = require("./routes/salonRoutes");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 // ROUTES
 app.use("/api/auth", authRoutes);
+app.use("/api/salons", salonRoutes);
 
 
 // SERVER

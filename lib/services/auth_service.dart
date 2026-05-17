@@ -29,11 +29,21 @@ class AuthService {
     }
   }
 
-  static Future<Map<String, dynamic>> signup(String name, String email, String password, String role, {String? salonName}) async {
+  static Future<Map<String, dynamic>> signup(String name, String email, String password, String role, {
+    String? salonName,
+    String? address,
+    String? phoneNumber,
+    String? openingTime,
+    String? closingTime,
+  }) async {
     try {
       final body = {'name': name, 'email': email, 'password': password, 'role': role};
       if (salonName != null && salonName.isNotEmpty) {
         body['salonName'] = salonName;
+        if (address != null) body['address'] = address;
+        if (phoneNumber != null) body['phoneNumber'] = phoneNumber;
+        if (openingTime != null) body['openingTime'] = openingTime;
+        if (closingTime != null) body['closingTime'] = closingTime;
       }
       
       final response = await http.post(

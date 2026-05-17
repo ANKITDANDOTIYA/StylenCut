@@ -11,6 +11,12 @@ const createSalon = async (ownerId, name, data = {}) => {
     return result.rows[0];
 };
 
+const getAllSalons = async () => {
+    const result = await pool.query(`SELECT * FROM salons`);
+    return result.rows;
+};
+
 module.exports = {
     createSalon,
+    getAllSalons,
 };

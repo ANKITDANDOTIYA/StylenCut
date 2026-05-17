@@ -1,202 +1,270 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/salon_details_screen.dart';
+import 'package:barber_flow/viewmodels/salon_viewmodel.dart';
+import 'package:barber_flow/models/salon.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final salons = [
-      {
-        'name': 'The Gilded Razor',
-        'distance': '0.8 miles away',
-        'status': 'Open now',
-        'image': 'assets/images/salon1.jpg',
-      },
-      {
-        'name': 'Urban Blade Studio',
-        'distance': '1.2 miles away',
-        'status': 'Open now',
-        'image': 'assets/images/salon2.jpg',
-      },
-      {
-        'name': 'Iron & Ink Grooming',
-        'distance': '2.1 miles away',
-        'status': 'Open now',
-        'image': 'assets/images/salon3.jpg',
-      },
-    ];
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SalonViewModel>().fetchSalons();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Find your next look',
-                      style: GoogleFonts.poppins(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    
-                    // Search Bar
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search for salons, services...',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+        child: Consumer<SalonViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.isLoading && viewModel.salons.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                    // Filters
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildFilterChip('OPEN NOW (12)', isSelected: true, context: context),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Top Rated', context: context),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Nearest', context: context),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+            final salons = viewModel.salons;
 
-                    // Section Title
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+            return CustomScrollView(
+              slivers: [
+                // Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Premium Salons',
+                          'Find your next look',
                           style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                        Text(
-                          'View All',
-                          style: GoogleFonts.poppins(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w600,
+                        const SizedBox(height: 24),
+                        
+                        // Search Bar
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search for salons, services...',
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.grey.shade50,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Filters
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              _buildFilterChip('OPEN NOW', isSelected: true, context: context),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Top Rated', context: context),
+                              const SizedBox(width: 8),
+                              _buildFilterChip('Nearest', context: context),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Section Title
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              'Premium Salons',
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'View All',
+                              style: GoogleFonts.poppins(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            // Salons List
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final salon = salons[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const SalonDetailsScreen()),
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey.shade200),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Image Placeholder
-                              Container(
-                                height: 160,
+                // Salons List
+                if (salons.isEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Center(
+                        child: Text(
+                          'No salons found.',
+                          style: GoogleFonts.poppins(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final salon = salons[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const SalonDetailsScreen()),
+                                );
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.grey.shade200),
                                 ),
-                                child: const Center(
-                                  child: Icon(Icons.image, color: Colors.grey, size: 40),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      salon['name']!,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                    // Image Placeholder
+                                    Container(
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                        image: const DecorationImage(
+                                          image: NetworkImage('https://images.unsplash.com/photo-1521590832167-7bfc17484d8d?q=80&w=2070&auto=format&fit=crop'),
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.near_me, size: 16, color: Colors.grey.shade600),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          salon['distance']!,
-                                          style: GoogleFonts.poppins(
-                                            color: Colors.grey.shade600,
-                                            fontSize: 14,
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  salon.name,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Icon(Icons.star, color: Colors.amber, size: 18),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    salon.rating.toStringAsFixed(1),
+                                                    style: GoogleFonts.poppins(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Icon(Icons.schedule, size: 16, color: Theme.of(context).primaryColor),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          salon['status']!,
-                                          style: GoogleFonts.poppins(
-                                            color: Theme.of(context).primaryColor,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.near_me, size: 16, color: Colors.grey.shade600),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  salon.address ?? 'Address not available',
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.grey.shade600,
+                                                    fontSize: 14,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.schedule, size: 16, color: Theme.of(context).primaryColor),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                salon.openingTime != null && salon.closingTime != null
+                                                    ? '${salon.openingTime} - ${salon.closingTime}'
+                                                    : 'Hours not set',
+                                                style: GoogleFonts.poppins(
+                                                  color: Theme.of(context).primaryColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 16),
+                                              if (salon.isOpen)
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green.shade50,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Text(
+                                                    'OPEN',
+                                                    style: GoogleFonts.poppins(
+                                                      color: Colors.green,
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
+                        childCount: salons.length,
                       ),
-                    );
-                  },
-                  childCount: salons.length,
-                ),
-              ),
-            ),
-          ],
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -223,4 +291,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-

@@ -6,7 +6,7 @@ const { findUserByEmail, createUser } = require('../models/authModel');
 
 exports.signup = async (req, res) => {
     try {
-        const {email, password, name, role, salonName} = req.body;
+        const {email, password, name, role, salonName, address, phoneNumber, openingTime, closingTime} = req.body;
 
         const existingUser = await findUserByEmail(email);
 
@@ -24,7 +24,13 @@ exports.signup = async (req, res) => {
         let newSalon = null;
         if (newUser.role === 'admin' && salonName) {
             const { createSalon } = require('../models/salonModel');
-            newSalon = await createSalon(newUser.id, salonName);
+            const data = {
+                address: address,
+                phone_number: phoneNumber,
+                opening_time: openingTime,
+                closing_time: closingTime
+            };
+            newSalon = await createSalon(newUser.id, salonName, data);
         }
 
         res.status(201).json({

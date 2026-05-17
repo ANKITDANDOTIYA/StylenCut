@@ -34,12 +34,25 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> signup(String name, String email, String password, String role, {String? salonName}) async {
+  Future<bool> signup(String name, String email, String password, String role, {
+    String? salonName,
+    String? address,
+    String? phoneNumber,
+    String? openingTime,
+    String? closingTime,
+  }) async {
     _setLoading(true);
     _errorMessage = '';
     
     try {
-      final result = await AuthService.signup(name, email, password, role, salonName: salonName);
+      final result = await AuthService.signup(
+        name, email, password, role, 
+        salonName: salonName,
+        address: address,
+        phoneNumber: phoneNumber,
+        openingTime: openingTime,
+        closingTime: closingTime,
+      );
       
       if (result['success'] == true) {
         return true;

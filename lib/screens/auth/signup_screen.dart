@@ -16,6 +16,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _salonNameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _openingTimeController = TextEditingController();
+  final _closingTimeController = TextEditingController();
   String _selectedRole = 'user';
 
   Future<void> _signup() async {
@@ -26,6 +30,10 @@ class _SignupScreenState extends State<SignupScreen> {
       _passwordController.text,
       _selectedRole,
       salonName: _selectedRole == 'admin' ? _salonNameController.text.trim() : null,
+      address: _selectedRole == 'admin' ? _addressController.text.trim() : null,
+      phoneNumber: _selectedRole == 'admin' ? _phoneController.text.trim() : null,
+      openingTime: _selectedRole == 'admin' ? _openingTimeController.text.trim() : null,
+      closingTime: _selectedRole == 'admin' ? _closingTimeController.text.trim() : null,
     );
 
     if (success && mounted) {
@@ -121,6 +129,47 @@ class _SignupScreenState extends State<SignupScreen> {
                     labelText: 'Salon Name',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _addressController,
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _openingTimeController,
+                        decoration: InputDecoration(
+                          labelText: 'Opening Time (e.g., 09:00)',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextField(
+                        controller: _closingTimeController,
+                        decoration: InputDecoration(
+                          labelText: 'Closing Time (e.g., 20:00)',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
               const SizedBox(height: 24),

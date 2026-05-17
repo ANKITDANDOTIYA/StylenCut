@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/onboarding/splash_screen.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
 import 'package:barber_flow/viewmodels/auth_viewmodel.dart';
+import 'package:barber_flow/viewmodels/salon_viewmodel.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AdminViewModel()),
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => SalonViewModel()),
       ],
       child: MaterialApp(
         title: 'BarberFlow',
