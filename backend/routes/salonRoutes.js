@@ -3,6 +3,9 @@ const router = express.Router();
 const salonController = require("../controller/salonController");
 const upload = require("../middlewares/upload");
 
+router.get("/bookings/customer/:customerName", salonController.getCustomerBookings);
+router.put("/bookings/:bookingId/status", salonController.updateBookingStatus);
+
 router.get("/", salonController.getAllSalons);
 router.put("/:id", salonController.updateSalonDetails);
 router.get("/:id/barbers", salonController.getBarbers);

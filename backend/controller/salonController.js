@@ -1,6 +1,6 @@
 const { getAllSalons, updateSalon } = require('../models/salonModel');
 const { getBarbersBySalon, assignBarberToSalon, createBarberUser, findUserByEmail } = require('../models/authModel');
-const { createBooking, getBookingsBySalon } = require('../models/bookingModel');
+const { createBooking, getBookingsBySalon, getBookingsByCustomer, updateBookingStatus } = require('../models/bookingModel');
 const bcrypt = require('bcryptjs');
 
 exports.getAllSalons = async (req, res) => {
@@ -119,5 +119,26 @@ exports.uploadThumbnail = async (req, res) => {
             message: "Upload failed",
             error: error.message
         });
+    }
+};
+
+exports.getCustomerBookings = async (req, res) => {
+    try {
+        const customerName = req.params.customerName;
+        const bookings = await getBookingsByCustomer(customerName);
+        res.status(200).json({ success: true, bookings });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};
+
+exports.updateBookingStatus = async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const { status } = req.body;
+        const booking = await updateBookingStatus(bookingId, status);
+        res.status(200).json({ success: true, booking });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
     }
 };

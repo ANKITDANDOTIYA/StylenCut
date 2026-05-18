@@ -22,10 +22,15 @@ async function migrate() {
                 booking_time VARCHAR(100) NOT NULL,
                 price DECIMAL(10,2) NOT NULL,
                 barber_name VARCHAR(255) NOT NULL,
+                status VARCHAR(50) DEFAULT 'Pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
         console.log("Created bookings table successfully.");
+
+        // Alter to add status if not exists (for existing tables)
+        await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Pending';`);
+        console.log("Added status column to bookings if not exists.");
 
         console.log("Migration completed successfully.");
     } catch (e) {

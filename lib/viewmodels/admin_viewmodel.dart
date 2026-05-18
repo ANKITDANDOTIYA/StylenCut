@@ -25,8 +25,8 @@ class AdminViewModel extends ChangeNotifier {
   
   // Booking status counts
   int get totalBookings => _todayBookings.length;
-  int get doneBookings => (_todayBookings.length * 0.75).round();
-  int get leftBookings => _todayBookings.length - doneBookings;
+  int get doneBookings => _todayBookings.where((b) => b.status == 'Completed').length;
+  int get leftBookings => _todayBookings.where((b) => b.status != 'Completed').length;
 
   Future<void> initializeSalon(int salonId) async {
     _isLoading = true;
@@ -39,6 +39,36 @@ class AdminViewModel extends ChangeNotifier {
       _todayBookings = await BookingService.fetchBookings(salonId);
     } catch (e) {
       print('Error initializing salon admin data: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateBookingStatus(int bookingId, String status) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final success = await BookingService.updateBookingStatus(bookingId, status);
+      if (success) {
+        final index = _todayBookings.indexWhere((b) => b.id == bookingId.toString());
+        if (index != -1) {
+          final b = _todayBookings[index];
+          _todayBookings[index] = BookingModel(
+            id: b.id,
+            customerName: b.customerName,
+            serviceName: b.serviceName,
+            time: b.time,
+            price: b.price,
+            barberName: b.barberName,
+            status: status,
+            salonName: b.salonName,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error updating booking status: $e');
     }
 
     _isLoading = false;

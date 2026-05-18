@@ -5,6 +5,8 @@ class BookingModel {
   final String time;
   final double price;
   final String barberName;
+  final String status;
+  final String salonName;
 
   BookingModel({
     required this.id,
@@ -13,6 +15,8 @@ class BookingModel {
     required this.time,
     required this.price,
     required this.barberName,
+    this.status = 'Pending',
+    this.salonName = '',
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,8 @@ class BookingModel {
       time: json['booking_time'] ?? '',
       price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
       barberName: json['barber_name'] ?? '',
+      status: json['status'] ?? 'Pending',
+      salonName: json['salon_name'] ?? '',
     );
   }
 
@@ -34,6 +40,7 @@ class BookingModel {
       'bookingTime': time,
       'price': price,
       'barberName': barberName,
+      'status': status,
     };
   }
 }

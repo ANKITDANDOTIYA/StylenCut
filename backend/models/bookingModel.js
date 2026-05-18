@@ -18,7 +18,29 @@ const getBookingsBySalon = async (salonId) => {
     return result.rows;
 };
 
+const getBookingsByCustomer = async (customerName) => {
+    const result = await pool.query(
+        `SELECT b.*, s.name as salon_name 
+         FROM bookings b
+         LEFT JOIN salons s ON b.salon_id = s.id
+         WHERE b.customer_name = $1
+         ORDER BY b.created_at DESC`,
+        [customerName]
+    );
+    return result.rows;
+};
+
+const updateBookingStatus = async (bookingId, status) => {
+    const result = await pool.query(
+        `UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *`,
+        [status, bookingId]
+    );
+    return result.rows[0];
+};
+
 module.exports = {
     createBooking,
     getBookingsBySalon,
+    getBookingsByCustomer,
+    updateBookingStatus,
 };
