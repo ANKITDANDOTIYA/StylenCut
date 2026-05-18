@@ -1,3 +1,4 @@
+const pool = require('../config/db');
 const { getAllSalons, updateSalon } = require('../models/salonModel');
 const { getBarbersBySalon, assignBarberToSalon, createBarberUser, findUserByEmail } = require('../models/authModel');
 const { createBooking, getBookingsBySalon, getBookingsByCustomer, updateBookingStatus } = require('../models/bookingModel');
@@ -84,6 +85,16 @@ exports.createBooking = async (req, res) => {
     try {
         const salonId = req.params.id;
         const { customerName, serviceName, bookingDate, bookingTime, price, barberName } = req.body;
+        
+        // Verify that the salon is open
+        const salonQuery = await pool.query("SELECT is_open FROM salons WHERE id = $1", [salonId]);
+        if (salonQuery.rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Salon not found" });
+        }
+        if (!salonQuery.rows[0].is_open) {
+            return res.status(400).json({ success: false, message: "Sorry, this salon is currently closed and not accepting bookings." });
+        }
+
         const booking = await createBooking(
             salonId,
             customerName,
@@ -138,6 +149,26 @@ exports.updateBookingStatus = async (req, res) => {
         const { status } = req.body;
         const booking = await updateBookingStatus(bookingId, status);
         res.status(200).json({ success: true, booking });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};
+
+exports.toggleSalonStatus = async (req, res) => {
+    try {
+        const salonId = req.params.id;
+        const { isOpen } = req.body;
+        
+        const result = await pool.query(
+            "UPDATE salons SET is_open = $1 WHERE id = $2 RETURNING *",
+            [isOpen, salonId]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Salon not found" });
+        }
+        
+        res.status(200).json({ success: true, salon: result.rows[0] });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error", error: error.message });
     }

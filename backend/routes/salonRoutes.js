@@ -8,6 +8,7 @@ router.put("/bookings/:bookingId/status", salonController.updateBookingStatus);
 
 router.get("/", salonController.getAllSalons);
 router.put("/:id", salonController.updateSalonDetails);
+router.put("/:id/status", salonController.toggleSalonStatus);
 router.get("/:id/barbers", salonController.getBarbers);
 router.post("/:id/barbers", salonController.assignBarber);
 router.post("/:id/barbers/new", salonController.createBarber);

@@ -139,4 +139,23 @@ class SalonService {
       return null;
     }
   }
+
+  static Future<bool> toggleSalonStatus(int salonId, bool isOpen) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/$salonId/status'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'isOpen': isOpen}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print('Error toggling salon status: $e');
+      return false;
+    }
+  }
 }

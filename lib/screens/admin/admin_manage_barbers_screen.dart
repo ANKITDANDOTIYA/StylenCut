@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/salon_viewmodel.dart';
+import '../../viewmodels/admin_viewmodel.dart';
 
 class AdminManageBarbersScreen extends StatefulWidget {
   const AdminManageBarbersScreen({super.key});
@@ -90,6 +91,10 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
 
                   if (success) {
                     if (context.mounted) {
+                      // Dynamically sync AdminViewModel statistics and barbers lists
+                      Provider.of<AdminViewModel>(context, listen: false)
+                          .initializeSalon(viewModel.adminSalon!.id);
+                      
                       Navigator.pop(context);
                       setState(() {
                         _fetchBarbers(); // Refresh the list

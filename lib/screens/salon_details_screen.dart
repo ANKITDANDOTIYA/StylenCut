@@ -78,13 +78,63 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.salon.name,
-                    style: GoogleFonts.poppins(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.salon.name,
+                          style: GoogleFonts.poppins(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: widget.salon.isOpen
+                              ? const Color(0xFFE8F5E9)
+                              : const Color(0xFFFFEBEE),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: widget.salon.isOpen
+                                ? const Color(0xFFC8E6C9)
+                                : const Color(0xFFFFCDD2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: widget.salon.isOpen
+                                    ? const Color(0xFF4CAF50)
+                                    : const Color(0xFFE53935),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              widget.salon.isOpen ? 'OPEN' : 'CLOSED',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                                color: widget.salon.isOpen
+                                    ? const Color(0xFF2E7D32)
+                                    : const Color(0xFFC62828),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   SingleChildScrollView(
@@ -211,19 +261,56 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                   ),
                                 ),
                                 trailing: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => BookingSelectionScreen(
-                                          barber: barber,
-                                          salonName: widget.salon.name,
-                                          salonId: widget.salon.id,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  onPressed: widget.salon.isOpen
+                                      ? () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => BookingSelectionScreen(
+                                                barber: barber,
+                                                salonName: widget.salon.name,
+                                                salonId: widget.salon.id,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      : () {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: [
+                                                  const Icon(Icons.info_outline, color: Colors.white),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Sorry, ${widget.salon.name} is currently closed.',
+                                                      style: GoogleFonts.poppins(
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: const Color(0xFFE53935),
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(16),
+                                              ),
+                                            ),
+                                          );
+                                        },
                                   style: ElevatedButton.styleFrom(
+                                    backgroundColor: widget.salon.isOpen
+                                        ? Theme.of(context).primaryColor
+                                        : Colors.grey.shade300,
+                                    foregroundColor: widget.salon.isOpen
+                                        ? Colors.white
+                                        : Colors.grey.shade600,
+                                    elevation: 0,
                                     padding: const EdgeInsets.symmetric(horizontal: 24),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
                                   ),
                                   child: const Text('Book'),
                                 ),

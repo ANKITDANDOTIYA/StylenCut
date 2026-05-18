@@ -5,6 +5,9 @@ import '../services/salon_service.dart';
 import '../services/booking_service.dart';
 
 class AdminViewModel extends ChangeNotifier {
+  int? _salonId;
+  int? get salonId => _salonId;
+
   bool _isShopAccepting = true;
   bool get isShopAccepting => _isShopAccepting;
 
@@ -29,10 +32,15 @@ class AdminViewModel extends ChangeNotifier {
   int get leftBookings => _todayBookings.where((b) => b.status != 'Completed').length;
 
   Future<void> initializeSalon(int salonId) async {
+    _salonId = salonId;
     _isLoading = true;
     notifyListeners();
 
     try {
+      final salons = await SalonService.getSalons();
+      final currentSalon = salons.firstWhere((s) => s.id == salonId);
+      _isShopAccepting = currentSalon.isOpen;
+
       final rawBarbers = await SalonService.getBarbers(salonId);
       _barbers = rawBarbers.map((json) => BarberModel.fromJson(json)).toList();
 
@@ -75,9 +83,18 @@ class AdminViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleShopStatus(bool value) {
+  Future<void> toggleShopStatus(bool value) async {
     _isShopAccepting = value;
     notifyListeners();
+
+    if (_salonId != null) {
+      final success = await SalonService.toggleSalonStatus(_salonId!, value);
+      if (!success) {
+        // Revert on failure
+        _isShopAccepting = !value;
+        notifyListeners();
+      }
+    }
   }
 
   void updateBarberStatus(String id, BarberStatus newStatus, [String? newDetails]) {
