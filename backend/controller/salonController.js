@@ -1,5 +1,6 @@
 const { getAllSalons, updateSalon } = require('../models/salonModel');
 const { getBarbersBySalon, assignBarberToSalon, createBarberUser, findUserByEmail } = require('../models/authModel');
+const { createBooking, getBookingsBySalon } = require('../models/bookingModel');
 const bcrypt = require('bcryptjs');
 
 exports.getAllSalons = async (req, res) => {
@@ -64,6 +65,35 @@ exports.createBarber = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newBarber = await createBarberUser(name, email, hashedPassword, salonId);
         res.status(201).json({ success: true, barber: newBarber });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};
+
+exports.getBookings = async (req, res) => {
+    try {
+        const salonId = req.params.id;
+        const bookings = await getBookingsBySalon(salonId);
+        res.status(200).json({ success: true, bookings });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};
+
+exports.createBooking = async (req, res) => {
+    try {
+        const salonId = req.params.id;
+        const { customerName, serviceName, bookingDate, bookingTime, price, barberName } = req.body;
+        const booking = await createBooking(
+            salonId,
+            customerName,
+            serviceName,
+            bookingDate,
+            bookingTime,
+            price,
+            barberName
+        );
+        res.status(201).json({ success: true, booking });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error", error: error.message });
     }

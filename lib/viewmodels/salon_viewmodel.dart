@@ -5,9 +5,11 @@ import '../services/salon_service.dart';
 class SalonViewModel extends ChangeNotifier {
   List<Salon> _salons = [];
   bool _isLoading = false;
+  Salon? _adminSalon;
 
   List<Salon> get salons => _salons;
   bool get isLoading => _isLoading;
+  Salon? get adminSalon => _adminSalon;
 
   Future<void> fetchSalons() async {
     _isLoading = true;
@@ -16,6 +18,26 @@ class SalonViewModel extends ChangeNotifier {
     _salons = await SalonService.getSalons();
 
     _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchAdminSalon(int adminId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    _salons = await SalonService.getSalons();
+    try {
+      _adminSalon = _salons.firstWhere((s) => s.ownerId == adminId);
+    } catch (e) {
+      _adminSalon = null;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void setAdminSalon(Salon salon) {
+    _adminSalon = salon;
     notifyListeners();
   }
 
@@ -29,6 +51,9 @@ class SalonViewModel extends ChangeNotifier {
       final index = _salons.indexWhere((s) => s.id == salonId);
       if (index != -1) {
         _salons[index] = updated;
+      }
+      if (_adminSalon != null && _adminSalon!.id == salonId) {
+        _adminSalon = updated;
       }
     }
 

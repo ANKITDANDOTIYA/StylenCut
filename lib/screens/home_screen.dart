@@ -139,7 +139,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => const SalonDetailsScreen()),
+                                  MaterialPageRoute(
+                                    builder: (_) => SalonDetailsScreen(salon: salon),
+                                  ),
                                 );
                               },
                               child: Container(

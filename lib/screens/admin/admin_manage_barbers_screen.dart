@@ -21,8 +21,8 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
 
   void _fetchBarbers() {
     final viewModel = Provider.of<SalonViewModel>(context, listen: false);
-    if (viewModel.salons.isNotEmpty) {
-      _barbersFuture = viewModel.fetchBarbers(viewModel.salons.first.id);
+    if (viewModel.adminSalon != null) {
+      _barbersFuture = viewModel.fetchBarbers(viewModel.adminSalon!.id);
     } else {
       _barbersFuture = Future.value([]);
     }
@@ -80,9 +80,9 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                 }
 
                 final viewModel = Provider.of<SalonViewModel>(context, listen: false);
-                if (viewModel.salons.isNotEmpty) {
+                if (viewModel.adminSalon != null) {
                   final success = await viewModel.createBarber(
-                    viewModel.salons.first.id,
+                    viewModel.adminSalon!.id,
                     name,
                     email,
                     password,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'package:barber_flow/screens/admin/admin_dashboard_screen.dart';
 import 'package:barber_flow/screens/admin/admin_today_bookings_screen.dart';
 import 'package:barber_flow/screens/admin/admin_manage_barbers_screen.dart';
 import 'package:barber_flow/screens/main_screen.dart';
-import 'package:provider/provider.dart';
+import 'package:barber_flow/services/auth_service.dart';
+import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
 import '../../viewmodels/salon_viewmodel.dart';
 import 'admin_edit_salon_screen.dart';
 
@@ -18,16 +20,127 @@ class AdminMainScreen extends StatefulWidget {
 
 class _AdminMainScreenState extends State<AdminMainScreen> {
   int _currentIndex = 0;
+  bool _initializing = true;
+  String? _errorMessage;
 
   final List<Widget> _screens = [
     const AdminDashboardScreen(),
     const AdminTodayBookingsScreen(),
-    const AdminManageBarbersScreen(), // Using as "Clients" or "Manage Barbers" tab
+    const AdminManageBarbersScreen(),
     const _AdminSettingsScreen(),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _initializeAdminWorkspace();
+  }
+
+  Future<void> _initializeAdminWorkspace() async {
+    try {
+      final adminId = await AuthService.getUserId();
+      if (adminId == null) {
+        setState(() {
+          _errorMessage = "Unable to retrieve authenticated Admin account ID.";
+          _initializing = false;
+        });
+        return;
+      }
+
+      final salonViewModel = Provider.of<SalonViewModel>(context, listen: false);
+      await salonViewModel.fetchAdminSalon(adminId);
+
+      if (salonViewModel.adminSalon == null) {
+        setState(() {
+          _errorMessage = "No salon found for your Admin account. Please contact support.";
+          _initializing = false;
+        });
+        return;
+      }
+
+      final adminViewModel = Provider.of<AdminViewModel>(context, listen: false);
+      await adminViewModel.initializeSalon(salonViewModel.adminSalon!.id);
+
+      setState(() {
+        _initializing = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Error initializing workspace: ${e.toString()}";
+        _initializing = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_initializing) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 24),
+              Text(
+                'Initializing Admin Workspace...',
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 64),
+                const SizedBox(height: 24),
+                Text(
+                  'Workspace Error',
+                  style: GoogleFonts.manrope(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  _errorMessage!,
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const MainScreen()),
+                    );
+                  },
+                  child: const Text('Back to Client Panel'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -82,10 +195,13 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final viewModel = context.read<SalonViewModel>();
-      if (viewModel.salons.isEmpty) {
-        viewModel.fetchSalons();
+      if (viewModel.adminSalon == null) {
+        final adminId = await AuthService.getUserId();
+        if (adminId != null) {
+          viewModel.fetchAdminSalon(adminId);
+        }
       }
     });
   }
@@ -105,13 +221,13 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
       ),
       body: Consumer<SalonViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.isLoading && viewModel.salons.isEmpty) {
+          if (viewModel.isLoading && viewModel.adminSalon == null) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          final salon = viewModel.salons.isNotEmpty ? viewModel.salons.first : null;
+          final salon = viewModel.adminSalon;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),

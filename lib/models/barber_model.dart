@@ -32,4 +32,12 @@ class BarberModel {
     this.status = BarberStatus.free,
     this.details,
   });
+
+  factory BarberModel.fromJson(Map<String, dynamic> json) {
+    return BarberModel(
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? '',
+      status: BarberStatus.free,
+    );
+  }
 }

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/user/booking_confirmation_screen.dart';
+import 'package:barber_flow/services/auth_service.dart';
+import 'package:barber_flow/services/booking_service.dart';
+import 'package:barber_flow/models/booking_model.dart';
 
 class BookingSelectionScreen extends StatefulWidget {
   final Map<String, String> barber;
   final String salonName;
+  final int salonId;
 
   const BookingSelectionScreen({
     super.key,
     required this.barber,
     required this.salonName,
+    required this.salonId,
   });
 
   @override
@@ -358,22 +363,71 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: () {
-                      final details = {
-                        'salonName': widget.salonName,
-                        'barber': widget.barber['name'],
-                        'service': services[_selectedServiceIndex]['title'],
-                        'price': services[_selectedServiceIndex]['price'].toStringAsFixed(2),
-                        'date': '${dates[_selectedDateIndex]['month']} ${dates[_selectedDateIndex]['date']}',
-                        'time': times[_selectedTimeIndex],
-                      };
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => BookingConfirmationScreen(
-                            bookingDetails: details,
-                          ),
-                        ),
+                    onPressed: () async {
+                      // Show loading spinner
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const Center(child: CircularProgressIndicator()),
                       );
+
+                      try {
+                        final customerName = await AuthService.getUserName();
+                        final dateStr = '${dates[_selectedDateIndex]['month']} ${dates[_selectedDateIndex]['date']}';
+                        final timeStr = times[_selectedTimeIndex];
+                        final serviceTitle = services[_selectedServiceIndex]['title'];
+                        final priceVal = (services[_selectedServiceIndex]['price'] as num).toDouble();
+                        final barberNameVal = widget.barber['name'] ?? 'Unknown Barber';
+
+                        final newBooking = BookingModel(
+                          id: '', // Backend will assign ID
+                          customerName: customerName,
+                          serviceName: serviceTitle,
+                          time: '$dateStr, $timeStr',
+                          price: priceVal,
+                          barberName: barberNameVal,
+                        );
+
+                        final success = await BookingService.createBooking(widget.salonId, newBooking);
+
+                        if (context.mounted) {
+                          Navigator.pop(context); // Dismiss loading spinner
+                        }
+
+                        if (success) {
+                          final details = {
+                            'salonName': widget.salonName,
+                            'barber': barberNameVal,
+                            'service': serviceTitle,
+                            'price': priceVal.toStringAsFixed(2),
+                            'date': dateStr,
+                            'time': timeStr,
+                          };
+
+                          if (context.mounted) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => BookingConfirmationScreen(
+                                  bookingDetails: details,
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Failed to book appointment. Please try again.')),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.pop(context); // Dismiss loading if it was open
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('An error occurred: $e')),
+                          );
+                        }
+                      }
                     },
                     child: const Text('Book Now'),
                   ),

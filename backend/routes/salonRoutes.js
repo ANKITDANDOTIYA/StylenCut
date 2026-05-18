@@ -8,6 +8,8 @@ router.put("/:id", salonController.updateSalonDetails);
 router.get("/:id/barbers", salonController.getBarbers);
 router.post("/:id/barbers", salonController.assignBarber);
 router.post("/:id/barbers/new", salonController.createBarber);
+router.get("/:id/bookings", salonController.getBookings);
+router.post("/:id/bookings", salonController.createBooking);
 router.post("/upload", upload.single("thumbnail"), salonController.uploadThumbnail);
 
 module.exports = router;
