@@ -1,4 +1,7 @@
+// Barber Model Class - It is used to represent the barber model.
+
 import 'package:flutter/material.dart';
+
 
 enum BarberStatus {
   free('Free'),
@@ -39,5 +42,5 @@ class BarberModel {
       name: json['name'] ?? '',
       status: BarberStatus.free,
     );
-  }
+  },
 }
