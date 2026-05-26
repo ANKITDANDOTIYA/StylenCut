@@ -42,5 +42,5 @@ class BarberModel {
       name: json['name'] ?? '',
       status: BarberStatus.free,
     );
-  },
+  }
 }

@@ -7,19 +7,22 @@ import 'package:barber_flow/services/auth_service.dart';
 import 'package:barber_flow/screens/auth/login_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialIndex;
+  
+  const MainScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
   String _role = 'user';
 
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
     _loadRole();
   }
 

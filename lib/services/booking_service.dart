@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/booking_model.dart';
 
+import '../constants.dart';
+
 class BookingService {
-  static const String baseUrl = 'http://192.168.1.15:5000/api/salons';
+  static const String baseUrl = AppConstants.salonBaseUrl;
 
   static Future<List<BookingModel>> fetchBookings(int salonId) async {
     try {

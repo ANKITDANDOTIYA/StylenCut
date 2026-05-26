@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/user/booking_selection_screen.dart';
 import 'package:barber_flow/models/salon.dart';
 import 'package:barber_flow/viewmodels/salon_viewmodel.dart';
+import '../constants.dart';
 
 class SalonDetailsScreen extends StatefulWidget {
   final Salon salon;
@@ -59,7 +60,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                         image: NetworkImage(
                           widget.salon.thumbnailPic!.startsWith('http')
                               ? widget.salon.thumbnailPic!
-                              : 'http://192.168.1.15:5000${widget.salon.thumbnailPic}',
+                              : '${AppConstants.backendUrl}${widget.salon.thumbnailPic}',
                         ),
                         fit: BoxFit.cover,
                       )
@@ -192,13 +193,16 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                       final List<Map<String, String>> displayBarbers = [];
                       
                       if (dbBarbers.isNotEmpty) {
+                         
                         for (var item in dbBarbers) {
+                          
                           displayBarbers.add({
                             'id': item['id']?.toString() ?? '',
                             'name': item['name'] ?? 'Unknown',
                             'role': item['role'] ?? 'Barber',
                             'image': 'assets/images/barber1.jpg',
                           });
+                         
                         }
                       } else {
                         // Fallback to static mock barbers so newly created salons still have options
@@ -226,6 +230,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
 
                       return ListView.builder(
                         shrinkWrap: true,
+                        padding: EdgeInsets.zero,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: displayBarbers.length,
                         itemBuilder: (context, index) {

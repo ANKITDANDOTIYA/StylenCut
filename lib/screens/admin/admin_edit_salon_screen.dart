@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../models/salon.dart';
 import '../../viewmodels/salon_viewmodel.dart';
+import '../../constants.dart';
 
 class AdminEditSalonScreen extends StatefulWidget {
   final Salon salon;
@@ -50,7 +51,7 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
     if (path == null || path.isEmpty) return null;
     if (path.startsWith('http')) return path;
     // Resolve relative uploads folder endpoint relative to backend server
-    return 'http://192.168.1.15:5000$path';
+    return '${AppConstants.backendUrl}$path';
   }
 
   Future<void> _pickImage() async {

@@ -31,7 +31,7 @@ class BookingModel {
       status: json['status'] ?? 'Pending',
       salonName: json['salon_name'] ?? '',
     );
-  },
+  }
 
   Map<String, dynamic> toJson() {
     return {
