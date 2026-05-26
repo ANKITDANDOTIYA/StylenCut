@@ -14,6 +14,8 @@ router.post("/:id/barbers", salonController.assignBarber);
 router.post("/:id/barbers/new", salonController.createBarber);
 router.get("/:id/bookings", salonController.getBookings);
 router.post("/:id/bookings", salonController.createBooking);
+router.post("/:id/reviews", salonController.submitReview);
+router.get("/:id/reviews", salonController.getReviewsBySalon);
 router.post("/upload", upload.single("thumbnail"), salonController.uploadThumbnail);
 
 module.exports = router;

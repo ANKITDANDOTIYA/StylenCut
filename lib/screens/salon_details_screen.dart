@@ -145,7 +145,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                         Icon(Icons.star, color: Theme.of(context).primaryColor, size: 20),
                         const SizedBox(width: 4),
                         Text(
-                          '${widget.salon.rating.toStringAsFixed(1)} (128 reviews)',
+                          '${widget.salon.rating.toStringAsFixed(1)} (${widget.salon.reviewsCount} reviews)',
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -193,16 +193,14 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                       final List<Map<String, String>> displayBarbers = [];
                       
                       if (dbBarbers.isNotEmpty) {
-                         
                         for (var item in dbBarbers) {
-                          
                           displayBarbers.add({
                             'id': item['id']?.toString() ?? '',
                             'name': item['name'] ?? 'Unknown',
                             'role': item['role'] ?? 'Barber',
+                            'rating': item['rating']?.toString() ?? '5.0',
                             'image': 'assets/images/barber1.jpg',
                           });
-                         
                         }
                       } else {
                         // Fallback to static mock barbers so newly created salons still have options
@@ -211,18 +209,21 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             'id': 'mock1',
                             'name': 'Marcus Thorne',
                             'role': 'Master Barber • Beard Specialist',
+                            'rating': '4.8',
                             'image': 'assets/images/barber1.jpg',
                           },
                           {
                             'id': 'mock2',
                             'name': 'Julian Vance',
                             'role': 'Senior Stylist • Hair Tattoo',
+                            'rating': '4.7',
                             'image': 'assets/images/barber2.jpg',
                           },
                           {
                             'id': 'mock3',
                             'name': 'Arthur Morgan',
                             'role': 'Traditional Cuts • Hot Shave',
+                            'rating': '4.9',
                             'image': 'assets/images/barber3.jpg',
                           },
                         ]);
@@ -258,11 +259,26 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                 ),
                                 subtitle: Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    barber['role']!,
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey.shade600,
-                                    ),
+                                  child: Wrap(
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    spacing: 6,
+                                    children: [
+                                      Text(
+                                        barber['role']!,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                      const Icon(Icons.star, color: Colors.amber, size: 14),
+                                      Text(
+                                        barber['rating'] ?? '5.0',
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                          color: Colors.grey.shade700,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 trailing: ElevatedButton(

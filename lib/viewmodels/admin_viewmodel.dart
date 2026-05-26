@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../models/salon.dart';
 import '../models/barber_model.dart';
 import '../models/booking_model.dart';
 import '../services/salon_service.dart';
@@ -14,6 +15,9 @@ class AdminViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  Salon? _salon;
+  Salon? get salon => _salon;
+
   List<BarberModel> _barbers = [];
   List<BarberModel> get barbers => _barbers;
 
@@ -22,9 +26,17 @@ class AdminViewModel extends ChangeNotifier {
 
   // Stats
   int get todaysBookingsCount => _todayBookings.length;
-  double get salesTotal => _todayBookings.fold(0.0, (sum, item) => sum + item.price);
-  int get waitlistCount => _todayBookings.length > 2 ? 2 : _todayBookings.length;
-  double get avgRating => 4.9;
+  
+  // Real sales from completed bookings
+  double get salesTotal => _todayBookings
+      .where((b) => b.status == 'Completed')
+      .fold(0.0, (sum, item) => sum + item.price);
+  
+  // Real waitlist from pending bookings
+  int get waitlistCount => _todayBookings.where((b) => b.status == 'Pending').length;
+  
+  // Real average rating fetched from backend review system
+  double get avgRating => _salon?.rating ?? 4.5;
   
   // Booking status counts
   int get totalBookings => _todayBookings.length;
@@ -39,6 +51,7 @@ class AdminViewModel extends ChangeNotifier {
     try {
       final salons = await SalonService.getSalons();
       final currentSalon = salons.firstWhere((s) => s.id == salonId);
+      _salon = currentSalon;
       _isShopAccepting = currentSalon.isOpen;
 
       final rawBarbers = await SalonService.getBarbers(salonId);
@@ -65,6 +78,7 @@ class AdminViewModel extends ChangeNotifier {
           final b = _todayBookings[index];
           _todayBookings[index] = BookingModel(
             id: b.id,
+            salonId: b.salonId,
             customerName: b.customerName,
             serviceName: b.serviceName,
             time: b.time,

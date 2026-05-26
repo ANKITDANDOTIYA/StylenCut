@@ -203,6 +203,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                           MaterialPageRoute(
                                             builder: (_) => RateReviewScreen(
                                               booking: {
+                                                'salonId': booking.salonId,
                                                 'salon': booking.salonName.isNotEmpty ? booking.salonName : 'Premium Barber Shop',
                                                 'barber': booking.barberName,
                                                 'date': booking.time,

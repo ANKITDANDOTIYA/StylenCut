@@ -160,4 +160,38 @@ class SalonService {
       return false;
     }
   }
+
+  static Future<bool> submitReview({
+    required int salonId,
+    required String customerName,
+    required String barberName,
+    required int salonRating,
+    required int barberRating,
+    required String salonReview,
+    required String barberReview,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/$salonId/reviews'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'customerName': customerName,
+          'barberName': barberName,
+          'salonRating': salonRating,
+          'barberRating': barberRating,
+          'salonReview': salonReview,
+          'barberReview': barberReview,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print('Error submitting review: $e');
+      return false;
+    }
+  }
 }

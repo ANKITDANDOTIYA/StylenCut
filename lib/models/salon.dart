@@ -8,8 +8,8 @@ class Salon {
   final String? openingTime;
   final String? closingTime;
   final String? thumbnailPic;
-  // TODO: Add ratings later
   final double rating;
+  final int reviewsCount;
 
   Salon({
     required this.id,
@@ -21,21 +21,23 @@ class Salon {
     this.openingTime,
     this.closingTime,
     this.thumbnailPic,
-    this.rating = 4.5, // Default for now until backend gives us ratings
+    this.rating = 4.5,
+    this.reviewsCount = 0,
   });
 
   factory Salon.fromJson(Map<String, dynamic> json) {
     return Salon(
-      id: json['id'],
-      ownerId: json['owner_id'],
-      name: json['name'],
+      id: json['id'] != null ? (int.tryParse(json['id'].toString()) ?? 0) : 0,
+      ownerId: json['owner_id'] != null ? (int.tryParse(json['owner_id'].toString()) ?? 0) : 0,
+      name: json['name'] ?? 'Unknown Salon',
       address: json['address'],
       phoneNumber: json['phone_number'],
       isOpen: json['is_open'] ?? true,
       openingTime: json['opening_time'],
       closingTime: json['closing_time'],
       thumbnailPic: json['thumbnail_pic'],
-      rating: json['rating'] != null ? double.parse(json['rating'].toString()) : 4.5,
+      rating: json['rating'] != null ? (double.tryParse(json['rating'].toString()) ?? 4.5) : 4.5,
+      reviewsCount: json['reviews_count'] != null ? (int.tryParse(json['reviews_count'].toString()) ?? 0) : 0,
     );
   }
 }

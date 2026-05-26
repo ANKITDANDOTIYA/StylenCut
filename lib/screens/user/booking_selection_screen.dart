@@ -384,6 +384,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
     
                             final newBooking = BookingModel(
                               id: '', // Backend will assign ID
+                              salonId: widget.salonId,
                               customerName: customerName,
                               serviceName: serviceTitle,
                               time: '$dateStr, $timeStr',

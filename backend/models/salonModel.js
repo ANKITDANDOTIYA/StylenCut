@@ -12,7 +12,15 @@ const createSalon = async (ownerId, name, data = {}) => {
 };
 
 const getAllSalons = async () => {
-    const result = await pool.query(`SELECT * FROM salons`);
+    const result = await pool.query(`
+        SELECT s.*, 
+               COALESCE(ROUND(AVG(r.salon_rating), 1), 4.5)::float as rating,
+               COUNT(r.id)::int as reviews_count
+        FROM salons s
+        LEFT JOIN reviews r ON s.id = r.salon_id
+        GROUP BY s.id
+        ORDER BY s.id ASC
+    `);
     return result.rows;
 };
 

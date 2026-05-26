@@ -1,6 +1,7 @@
 
 class BookingModel {
   final String id;
+  final int salonId;
   final String customerName;
   final String serviceName;
   final String time;
@@ -11,6 +12,7 @@ class BookingModel {
 
   BookingModel({
     required this.id,
+    this.salonId = 0,
     required this.customerName,
     required this.serviceName,
     required this.time,
@@ -23,6 +25,7 @@ class BookingModel {
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
       id: json['id']?.toString() ?? '',
+      salonId: json['salon_id'] != null ? int.tryParse(json['salon_id'].toString()) ?? 0 : 0,
       customerName: json['customer_name'] ?? '',
       serviceName: json['service_name'] ?? '',
       time: json['booking_time'] ?? '',

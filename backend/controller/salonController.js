@@ -173,3 +173,38 @@ exports.toggleSalonStatus = async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error", error: error.message });
     }
 };
+
+exports.submitReview = async (req, res) => {
+    try {
+        const salonId = req.params.id;
+        const { customerName, barberName, salonRating, barberRating, salonReview, barberReview } = req.body;
+
+        const result = await pool.query(
+            `INSERT INTO reviews 
+            (salon_id, barber_name, customer_name, salon_rating, barber_rating, salon_review, barber_review)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [salonId, barberName, customerName, salonRating, barberRating, salonReview, barberReview]
+        );
+
+        res.status(201).json({
+            success: true,
+            review: result.rows[0],
+            message: "Review submitted successfully!"
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};
+
+exports.getReviewsBySalon = async (req, res) => {
+    try {
+        const salonId = req.params.id;
+        const result = await pool.query(
+            "SELECT * FROM reviews WHERE salon_id = $1 ORDER BY created_at DESC",
+            [salonId]
+        );
+        res.status(200).json({ success: true, reviews: result.rows });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};

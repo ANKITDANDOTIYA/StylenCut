@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:barber_flow/services/auth_service.dart';
+import 'package:barber_flow/services/salon_service.dart';
 
 class RateReviewScreen extends StatefulWidget {
   final Map<String, dynamic> booking;
@@ -13,10 +15,22 @@ class RateReviewScreen extends StatefulWidget {
 class _RateReviewScreenState extends State<RateReviewScreen> {
   int _salonRating = 0;
   int _barberRating = 0;
+  bool _isSubmitting = false;
+
+  final TextEditingController _salonCommentController = TextEditingController();
+  final TextEditingController _barberCommentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _salonCommentController.dispose();
+    _barberCommentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('Rate & Review'),
         leading: IconButton(
@@ -102,12 +116,13 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _salonCommentController,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Share your experience at the salon...',
                 hintStyle: TextStyle(color: Colors.grey.shade400),
                 filled: true,
-                fillColor: Colors.grey.shade50,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey.shade200),
@@ -148,12 +163,13 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _barberCommentController,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'How was your haircut?',
                 hintStyle: TextStyle(color: Colors.grey.shade400),
                 filled: true,
-                fillColor: Colors.grey.shade50,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey.shade200),
@@ -168,14 +184,64 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
 
             // Submit Action
             ElevatedButton(
-              onPressed: () {
-                // Return to previous screen and show a SnackBar or something
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Review submitted successfully!')),
-                );
-                Navigator.of(context).pop();
-              },
-              child: const Text('Submit Review'),
+              onPressed: _isSubmitting || _salonRating == 0 || _barberRating == 0
+                  ? null
+                  : () async {
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      final navigator = Navigator.of(context);
+
+                      setState(() {
+                        _isSubmitting = true;
+                      });
+    
+                      try {
+                        final customerName = await AuthService.getUserName();
+                        final salonId = widget.booking['salonId'] ?? 0;
+                        final barberName = widget.booking['barber'] ?? 'Unknown Barber';
+    
+                        if (salonId == 0) {
+                          throw Exception("Invalid Salon ID");
+                        }
+    
+                        final success = await SalonService.submitReview(
+                          salonId: salonId,
+                          customerName: customerName,
+                          barberName: barberName,
+                          salonRating: _salonRating,
+                          barberRating: _barberRating,
+                          salonReview: _salonCommentController.text,
+                          barberReview: _barberCommentController.text,
+                        );
+    
+                        if (success) {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(content: Text('Review submitted successfully!')),
+                          );
+                          navigator.pop();
+                        } else {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(content: Text('Failed to submit review. Please try again.')),
+                          );
+                        }
+                      } catch (e) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('An error occurred: $e')),
+                        );
+                      } finally {
+                        if (mounted) {
+                          setState(() {
+                            _isSubmitting = false;
+                          });
+                        }
+                      }
+                    },
+              child: _isSubmitting
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    )
+                  : const Text('Submit Review'),
             ),
           ],
         ),

@@ -32,6 +32,22 @@ async function migrate() {
         await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Pending';`);
         console.log("Added status column to bookings if not exists.");
 
+        // Create reviews table
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS reviews (
+                id SERIAL PRIMARY KEY,
+                salon_id INTEGER REFERENCES salons(id) ON DELETE CASCADE,
+                barber_name VARCHAR(255) NOT NULL,
+                customer_name VARCHAR(255) NOT NULL,
+                salon_rating INTEGER CHECK (salon_rating >= 1 AND salon_rating <= 5),
+                barber_rating INTEGER CHECK (barber_rating >= 1 AND barber_rating <= 5),
+                salon_review TEXT,
+                barber_review TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        console.log("Created reviews table successfully.");
+
         console.log("Migration completed successfully.");
     } catch (e) {
         console.error("Migration failed:", e.message);

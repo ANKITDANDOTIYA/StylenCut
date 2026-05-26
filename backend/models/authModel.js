@@ -27,7 +27,13 @@ const createUser = async (name,
 
 const getBarbersBySalon = async (salonId) => {
     const result = await pool.query(
-        "SELECT id, name, email, role, salon_id FROM users WHERE salon_id = $1 AND role = 'barber'",
+        `SELECT u.id, u.name, u.email, u.role, u.salon_id,
+                COALESCE(ROUND(AVG(r.barber_rating), 1), 5.0)::float as rating
+         FROM users u
+         LEFT JOIN reviews r ON u.name = r.barber_name AND u.salon_id = r.salon_id
+         WHERE u.salon_id = $1 AND u.role = 'barber'
+         GROUP BY u.id
+         ORDER BY u.id ASC`,
         [salonId]
     );
     return result.rows;
