@@ -72,7 +72,7 @@ class SalonService {
     }
   }
 
-  static Future<dynamic> createBarber(int salonId, String name, String email, String password) async {
+  static Future<dynamic> createBarber(int salonId, String name, String email, String password, {int? experience, String? profilePic}) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/$salonId/barbers/new'),
@@ -81,6 +81,8 @@ class SalonService {
           'name': name,
           'email': email,
           'password': password,
+          'experience': experience,
+          'profile_pic': profilePic,
         }),
       ).timeout(const Duration(seconds: 10));
 
@@ -93,6 +95,32 @@ class SalonService {
       return null;
     } catch (e) {
       print('Error creating barber: $e');
+      return null;
+    }
+  }
+
+  static Future<dynamic> updateBarber(int salonId, int barberId, String name, String email, {int? experience, String? profilePic}) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/$salonId/barbers/$barberId'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': name,
+          'email': email,
+          'experience': experience,
+          'profile_pic': profilePic,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          return data['barber'];
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error updating barber: $e');
       return null;
     }
   }

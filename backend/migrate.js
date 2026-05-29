@@ -11,6 +11,14 @@ async function migrate() {
         await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS salon_id INTEGER REFERENCES salons(id) ON DELETE SET NULL;`);
         console.log("Added salon_id to users.");
 
+        // Add experience to users
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS experience INTEGER;`);
+        console.log("Added experience to users.");
+
+        // Add profile_pic to users
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;`);
+        console.log("Added profile_pic to users.");
+
         // Create bookings table
         await pool.query(`
             CREATE TABLE IF NOT EXISTS bookings (

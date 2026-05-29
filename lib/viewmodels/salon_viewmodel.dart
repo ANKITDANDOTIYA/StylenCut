@@ -66,11 +66,23 @@ class SalonViewModel extends ChangeNotifier {
     return await SalonService.getBarbers(salonId);
   }
 
-  Future<bool> createBarber(int salonId, String name, String email, String password) async {
+  Future<bool> createBarber(int salonId, String name, String email, String password, {int? experience, String? profilePic}) async {
     _isLoading = true;
     notifyListeners();
 
-    final barber = await SalonService.createBarber(salonId, name, email, password);
+    final barber = await SalonService.createBarber(salonId, name, email, password, experience: experience, profilePic: profilePic);
+
+    _isLoading = false;
+    notifyListeners();
+    
+    return barber != null;
+  }
+
+  Future<bool> updateBarber(int salonId, int barberId, String name, String email, {int? experience, String? profilePic}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final barber = await SalonService.updateBarber(salonId, barberId, name, email, experience: experience, profilePic: profilePic);
 
     _isLoading = false;
     notifyListeners();

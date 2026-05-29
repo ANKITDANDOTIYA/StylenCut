@@ -12,6 +12,7 @@ router.put("/:id/status", salonController.toggleSalonStatus);
 router.get("/:id/barbers", salonController.getBarbers);
 router.post("/:id/barbers", salonController.assignBarber);
 router.post("/:id/barbers/new", salonController.createBarber);
+router.put("/:id/barbers/:barberId", salonController.updateBarber);
 router.get("/:id/bookings", salonController.getBookings);
 router.post("/:id/bookings", salonController.createBooking);
 router.post("/:id/reviews", salonController.submitReview);

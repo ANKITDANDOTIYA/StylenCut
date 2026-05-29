@@ -56,7 +56,7 @@ exports.assignBarber = async (req, res) => {
 exports.createBarber = async (req, res) => {
     try {
         const salonId = req.params.id;
-        const { name, email, password } = req.body;
+        const { name, email, password, experience, profile_pic } = req.body;
 
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
@@ -64,8 +64,38 @@ exports.createBarber = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newBarber = await createBarberUser(name, email, hashedPassword, salonId);
+        const newBarber = await createBarberUser(
+            name,
+            email,
+            hashedPassword,
+            salonId,
+            experience ? parseInt(experience) : null,
+            profile_pic || null
+        );
         res.status(201).json({ success: true, barber: newBarber });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    }
+};
+
+exports.updateBarber = async (req, res) => {
+    try {
+        const { id: salonId, barberId } = req.params;
+        const { name, email, experience, profile_pic } = req.body;
+
+        const result = await pool.query(
+            `UPDATE users 
+             SET name = $1, email = $2, experience = $3, profile_pic = $4
+             WHERE id = $5 AND salon_id = $6 AND role = 'barber'
+             RETURNING id, name, email, role, salon_id, experience, profile_pic`,
+            [name, email, experience ? parseInt(experience) : null, profile_pic || null, barberId, salonId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Barber not found in this salon" });
+        }
+
+        res.status(200).json({ success: true, barber: result.rows[0] });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error", error: error.message });
     }

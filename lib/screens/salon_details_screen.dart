@@ -197,8 +197,11 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                           displayBarbers.add({
                             'id': item['id']?.toString() ?? '',
                             'name': item['name'] ?? 'Unknown',
-                            'role': item['role'] ?? 'Barber',
+                            'role': item['experience'] != null ? '${item['experience']} yrs exp • Barber' : 'Barber',
+                            'experience': item['experience']?.toString() ?? '0',
                             'rating': item['rating']?.toString() ?? '5.0',
+                            'cuttings_count': item['cuttings_count']?.toString() ?? '0',
+                            'profile_pic': item['profile_pic'] ?? '',
                             'image': 'assets/images/barber1.jpg',
                           });
                         }
@@ -208,22 +211,31 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                           {
                             'id': 'mock1',
                             'name': 'Marcus Thorne',
-                            'role': 'Master Barber • Beard Specialist',
+                            'role': '5 yrs exp • Master Barber • Beard Specialist',
+                            'experience': '5',
                             'rating': '4.8',
+                            'cuttings_count': '120',
+                            'profile_pic': '',
                             'image': 'assets/images/barber1.jpg',
                           },
                           {
                             'id': 'mock2',
                             'name': 'Julian Vance',
-                            'role': 'Senior Stylist • Hair Tattoo',
+                            'role': '4 yrs exp • Senior Stylist • Hair Tattoo',
+                            'experience': '4',
                             'rating': '4.7',
+                            'cuttings_count': '85',
+                            'profile_pic': '',
                             'image': 'assets/images/barber2.jpg',
                           },
                           {
                             'id': 'mock3',
                             'name': 'Arthur Morgan',
-                            'role': 'Traditional Cuts • Hot Shave',
+                            'role': '8 yrs exp • Traditional Cuts • Hot Shave',
+                            'experience': '8',
                             'rating': '4.9',
+                            'cuttings_count': '250',
+                            'profile_pic': '',
                             'image': 'assets/images/barber3.jpg',
                           },
                         ]);
@@ -248,7 +260,16 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                 leading: CircleAvatar(
                                   radius: 30,
                                   backgroundColor: Colors.grey.shade200,
-                                  child: const Icon(Icons.person, color: Colors.grey),
+                                  backgroundImage: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
+                                      ? NetworkImage(
+                                          barber['profile_pic']!.startsWith('http')
+                                              ? barber['profile_pic']!
+                                              : '${AppConstants.backendUrl}${barber['profile_pic']}',
+                                        )
+                                      : null,
+                                  child: barber['profile_pic'] == null || barber['profile_pic']!.isEmpty
+                                      ? const Icon(Icons.person, color: Colors.grey)
+                                      : null,
                                 ),
                                 title: Text(
                                   barber['name']!,
@@ -271,7 +292,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                       ),
                                       const Icon(Icons.star, color: Colors.amber, size: 14),
                                       Text(
-                                        barber['rating'] ?? '5.0',
+                                        '${barber['rating'] ?? '5.0'} (${barber['cuttings_count'] ?? '0'} cuts)',
                                         style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13,

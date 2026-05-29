@@ -27,10 +27,12 @@ const createUser = async (name,
 
 const getBarbersBySalon = async (salonId) => {
     const result = await pool.query(
-        `SELECT u.id, u.name, u.email, u.role, u.salon_id,
-                COALESCE(ROUND(AVG(r.barber_rating), 1), 5.0)::float as rating
+        `SELECT u.id, u.name, u.email, u.role, u.salon_id, u.experience, u.profile_pic,
+                COALESCE(ROUND(AVG(r.barber_rating), 1), 5.0)::float as rating,
+                COUNT(DISTINCT b.id)::int as cuttings_count
          FROM users u
          LEFT JOIN reviews r ON u.name = r.barber_name AND u.salon_id = r.salon_id
+         LEFT JOIN bookings b ON u.name = b.barber_name AND u.salon_id = b.salon_id AND b.status = 'Completed'
          WHERE u.salon_id = $1 AND u.role = 'barber'
          GROUP BY u.id
          ORDER BY u.id ASC`,
@@ -41,18 +43,18 @@ const getBarbersBySalon = async (salonId) => {
 
 const assignBarberToSalon = async (userId, salonId) => {
     const result = await pool.query(
-        "UPDATE users SET salon_id = $1 WHERE id = $2 AND role = 'barber' RETURNING id, name, email, role, salon_id",
+        "UPDATE users SET salon_id = $1 WHERE id = $2 AND role = 'barber' RETURNING id, name, email, role, salon_id, experience, profile_pic",
         [salonId, userId]
     );
     return result.rows[0];
 };
 
-const createBarberUser = async (name, email, password, salonId) => {
+const createBarberUser = async (name, email, password, salonId, experience = null, profilePic = null) => {
     const result = await pool.query(
         `INSERT INTO users 
-        (name, email, password, role, salon_id)
-        VALUES ($1, $2, $3, 'barber', $4) RETURNING id, name, email, role, salon_id`,
-        [name, email, password, salonId]
+        (name, email, password, role, salon_id, experience, profile_pic)
+        VALUES ($1, $2, $3, 'barber', $4, $5, $6) RETURNING id, name, email, role, salon_id, experience, profile_pic`,
+        [name, email, password, salonId, experience, profilePic]
     );
     return result.rows[0];
 };

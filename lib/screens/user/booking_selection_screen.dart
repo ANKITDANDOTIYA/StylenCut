@@ -4,6 +4,7 @@ import 'package:barber_flow/screens/user/booking_confirmation_screen.dart';
 import 'package:barber_flow/services/auth_service.dart';
 import 'package:barber_flow/services/booking_service.dart';
 import 'package:barber_flow/models/booking_model.dart';
+import '../../constants.dart';
 
 class BookingSelectionScreen extends StatefulWidget {
   final Map<String, String> barber;
@@ -88,7 +89,16 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                       CircleAvatar(
                         radius: 30,
                         backgroundColor: Colors.grey.shade200,
-                        child: const Icon(Icons.person, color: Colors.grey),
+                        backgroundImage: widget.barber['profile_pic'] != null && widget.barber['profile_pic']!.isNotEmpty
+                            ? NetworkImage(
+                                widget.barber['profile_pic']!.startsWith('http')
+                                    ? widget.barber['profile_pic']!
+                                    : '${AppConstants.backendUrl}${widget.barber['profile_pic']}',
+                              )
+                            : null,
+                        child: widget.barber['profile_pic'] == null || widget.barber['profile_pic']!.isEmpty
+                            ? const Icon(Icons.person, color: Colors.grey)
+                            : null,
                       ),
                       const SizedBox(width: 16),
                       Column(
@@ -103,9 +113,10 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            widget.salonName,
+                            '${widget.salonName} • ${widget.barber['experience'] ?? '0'} yrs exp',
                             style: GoogleFonts.poppins(
                               color: Colors.grey.shade600,
+                              fontSize: 14,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -114,7 +125,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                               Icon(Icons.star, color: Theme.of(context).primaryColor, size: 16),
                               const SizedBox(width: 4),
                               Text(
-                                '4.9 (120+ reviews)',
+                                '${widget.barber['rating'] ?? '5.0'} (${widget.barber['cuttings_count'] ?? '0'} completed cuts)',
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
