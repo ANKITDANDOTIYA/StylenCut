@@ -81,14 +81,19 @@ exports.createBarber = async (req, res) => {
 exports.updateBarber = async (req, res) => {
     try {
         const { id: salonId, barberId } = req.params;
-        const { name, email, experience, profile_pic } = req.body;
+        const { name, email, experience, profile_pic, status, details } = req.body;
 
         const result = await pool.query(
             `UPDATE users 
-             SET name = $1, email = $2, experience = $3, profile_pic = $4
-             WHERE id = $5 AND salon_id = $6 AND role = 'barber'
-             RETURNING id, name, email, role, salon_id, experience, profile_pic`,
-            [name, email, experience ? parseInt(experience) : null, profile_pic || null, barberId, salonId]
+             SET name = COALESCE($1, name), 
+                 email = COALESCE($2, email), 
+                 experience = COALESCE($3, experience), 
+                 profile_pic = COALESCE($4, profile_pic),
+                 status = COALESCE($5, status),
+                 details = COALESCE($6, details)
+             WHERE id = $7 AND salon_id = $8 AND role = 'barber'
+             RETURNING id, name, email, role, salon_id, experience, profile_pic, status, details`,
+            [name || null, email || null, experience ? parseInt(experience) : null, profile_pic || null, status || null, details || null, barberId, salonId]
         );
 
         if (result.rows.length === 0) {

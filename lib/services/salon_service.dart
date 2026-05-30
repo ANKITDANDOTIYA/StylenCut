@@ -125,6 +125,28 @@ class SalonService {
     }
   }
 
+  static Future<bool> updateBarberStatus(int salonId, int barberId, String status, [String? details]) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/$salonId/barbers/$barberId'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'status': status,
+          'details': details,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print('Error updating barber status: $e');
+      return false;
+    }
+  }
+
   static Future<String?> uploadThumbnail(String filePath) async {
     try {
       final uri = Uri.parse('$baseUrl/upload');

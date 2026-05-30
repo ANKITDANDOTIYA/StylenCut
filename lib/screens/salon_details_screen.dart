@@ -21,6 +21,15 @@ class SalonDetailsScreen extends StatefulWidget {
 class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
   late Future<List<dynamic>> _barbersFuture;
 
+
+  Color _getStatusTextColor(String status) {
+    final s = status.trim().toLowerCase();
+    if (s == 'free') return const Color(0xFF2E7D32);
+    if (s == 'with client') return const Color(0xFFE65100);
+    if (s == 'busy') return const Color(0xFFC62828);
+    return const Color(0xFF2E7D32);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -202,6 +211,8 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             'rating': item['rating']?.toString() ?? '5.0',
                             'cuttings_count': item['cuttings_count']?.toString() ?? '0',
                             'profile_pic': item['profile_pic'] ?? '',
+                            'status': item['status'] ?? 'Free',
+                            'details': item['details'] ?? '',
                             'image': 'assets/images/barber1.jpg',
                           });
                         }
@@ -216,6 +227,8 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             'rating': '4.8',
                             'cuttings_count': '120',
                             'profile_pic': '',
+                            'status': 'Free',
+                            'details': 'Ready for appointments',
                             'image': 'assets/images/barber1.jpg',
                           },
                           {
@@ -226,6 +239,8 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             'rating': '4.7',
                             'cuttings_count': '85',
                             'profile_pic': '',
+                            'status': 'With Client',
+                            'details': 'Finishing a fresh fade',
                             'image': 'assets/images/barber2.jpg',
                           },
                           {
@@ -236,6 +251,8 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             'rating': '4.9',
                             'cuttings_count': '250',
                             'profile_pic': '',
+                            'status': 'Busy',
+                            'details': 'On lunch break',
                             'image': 'assets/images/barber3.jpg',
                           },
                         ]);
@@ -248,6 +265,8 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                         itemCount: displayBarbers.length,
                         itemBuilder: (context, index) {
                           final barber = displayBarbers[index];
+                          final bool isFree = barber['status']?.toLowerCase() == 'free';
+
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: Container(
@@ -263,129 +282,158 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                   ),
                                 ],
                               ),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                leading: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.1), width: 2),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 28,
-                                    backgroundColor: Colors.grey.shade100,
-                                    backgroundImage: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
-                                        ? NetworkImage(
-                                            barber['profile_pic']!.startsWith('http')
-                                                ? barber['profile_pic']!
-                                                : '${AppConstants.backendUrl}${barber['profile_pic']}',
-                                          )
-                                        : null,
-                                    child: barber['profile_pic'] == null || barber['profile_pic']!.isEmpty
-                                        ? const Icon(Icons.person, color: Colors.grey)
-                                        : null,
-                                  ),
-                                ),
-                                title: Text(
-                                  barber['name']!,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 6.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        barber['role']!,
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.grey.shade500,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.1), width: 2),
                                       ),
-                                      const SizedBox(height: 6),
-                                      Row(
+                                      child: CircleAvatar(
+                                        radius: 28,
+                                        backgroundColor: Colors.grey.shade100,
+                                        backgroundImage: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
+                                            ? NetworkImage(
+                                                barber['profile_pic']!.startsWith('http')
+                                                    ? barber['profile_pic']!
+                                                    : '${AppConstants.backendUrl}${barber['profile_pic']}',
+                                              )
+                                            : null,
+                                        child: barber['profile_pic'] == null || barber['profile_pic']!.isEmpty
+                                            ? const Icon(Icons.person, color: Colors.grey)
+                                            : null,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
-                                          const SizedBox(width: 4),
                                           Text(
-                                            '${barber['rating'] ?? '5.0'}',
+                                            barber['name']!,
                                             style: GoogleFonts.poppins(
+                                              fontSize: 17,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                              color: Colors.grey.shade800,
+                                              color: Colors.black87,
                                             ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          const SizedBox(width: 6),
+                                          const SizedBox(height: 4),
                                           Text(
-                                            '(${barber['cuttings_count'] ?? '0'} cuts)',
+                                            barber['role']!,
                                             style: GoogleFonts.poppins(
-                                              fontSize: 12,
                                               color: Colors.grey.shade500,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                             ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                barber['rating'] ?? '5.0',
+                                                style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13,
+                                                  color: Colors.grey.shade800,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                '(${barber['cuttings_count'] ?? '0'} cuts)',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.grey.shade500,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          if (barber['details'] != null && barber['details']!.isNotEmpty) ...[
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              barber['details']!,
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.grey.shade500,
+                                                fontSize: 11,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                trailing: ElevatedButton(
-                                  onPressed: widget.salon.isOpen
-                                      ? () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => BookingSelectionScreen(
-                                                barber: barber,
-                                                salonName: widget.salon.name,
-                                                salonId: widget.salon.id,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      : () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Row(
-                                                children: [
-                                                  const Icon(Icons.info_outline, color: Colors.white),
-                                                  const SizedBox(width: 8),
-                                                  Expanded(
-                                                    child: Text(
-                                                      'Sorry, ${widget.salon.name} is currently closed.',
-                                                      style: GoogleFonts.poppins(
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              backgroundColor: const Color(0xFFE53935),
-                                              behavior: SnackBarBehavior.floating,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(16),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: widget.salon.isOpen
-                                        ? Theme.of(context).primaryColor
-                                        : Colors.grey.shade200,
-                                    foregroundColor: widget.salon.isOpen
-                                        ? Colors.white
-                                        : Colors.grey.shade500,
-                                    elevation: 0,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                  ),
-                                  child: const Text('Book'),
+                                    const SizedBox(width: 16),
+                                    isFree
+                                        ? ElevatedButton(
+                                            onPressed: widget.salon.isOpen
+                                                ? () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) => BookingSelectionScreen(
+                                                          barber: barber,
+                                                          salonName: widget.salon.name,
+                                                          salonId: widget.salon.id,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                : () {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(
+                                                        content: Row(
+                                                          children: [
+                                                            const Icon(Icons.info_outline, color: Colors.white),
+                                                            const SizedBox(width: 8),
+                                                            Expanded(
+                                                              child: Text(
+                                                                'Sorry, ${widget.salon.name} is currently closed.',
+                                                                style: GoogleFonts.poppins(
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: Colors.white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        backgroundColor: const Color(0xFFE53935),
+                                                        behavior: SnackBarBehavior.floating,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(16),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Theme.of(context).primaryColor,
+                                              foregroundColor: Colors.white,
+                                              elevation: 0,
+                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            child: const Text('Book'),
+                                          )
+                                        : Text(
+                                            barber['status'] ?? 'Busy',
+                                            style: GoogleFonts.poppins(
+                                              color: _getStatusTextColor(barber['status'] ?? 'Busy'),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                  ],
                                 ),
                               ),
                             ),

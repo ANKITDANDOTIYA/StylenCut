@@ -48,7 +48,12 @@ class BarberModel {
     return BarberModel(
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
-      status: BarberStatus.free,
+      status: json['status'] != null
+          ? BarberStatus.values.firstWhere(
+              (e) => e.label.toLowerCase() == json['status'].toString().toLowerCase(),
+              orElse: () => BarberStatus.free,
+            )
+          : BarberStatus.free,
       details: json['details'],
       experience: json['experience'] != null ? int.tryParse(json['experience'].toString()) : null,
       profilePic: json['profile_pic'],

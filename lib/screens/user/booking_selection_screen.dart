@@ -23,6 +23,22 @@ class BookingSelectionScreen extends StatefulWidget {
 }
 
 class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
+  Color _getStatusColor(String status) {
+    final s = status.trim().toLowerCase();
+    if (s == 'free') return const Color(0xFF4CAF50);
+    if (s == 'with client') return const Color(0xFFFFB300);
+    if (s == 'busy') return const Color(0xFFE53935);
+    return const Color(0xFF4CAF50);
+  }
+
+  Color _getStatusTextColor(String status) {
+    final s = status.trim().toLowerCase();
+    if (s == 'free') return const Color(0xFF2E7D32);
+    if (s == 'with client') return const Color(0xFFE65100);
+    if (s == 'busy') return const Color(0xFFC62828);
+    return const Color(0xFF2E7D32);
+  }
+
   int _selectedServiceIndex = 0;
   int _selectedDateIndex = 0;
   int _selectedTimeIndex = 0;
@@ -83,6 +99,34 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Warning Banner if Barber is not Free
+                  if (widget.barber['status']?.toLowerCase() != 'free') ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF3CD), // Warm amber background
+                        border: Border.all(color: const Color(0xFFFFEBAA), width: 1.5),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.warning_amber_rounded, color: Color(0xFF856404), size: 24),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'This barber is currently ${widget.barber['status'] ?? 'Unavailable'}. You cannot book them at the moment.',
+                              style: GoogleFonts.poppins(
+                                color: const Color(0xFF856404),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   // Barber Info
                   Row(
                     children: [
@@ -101,39 +145,93 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                             : null,
                       ),
                       const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.barber['name']!,
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${widget.salonName} • ${widget.barber['experience'] ?? '0'} yrs exp',
-                            style: GoogleFonts.poppins(
-                              color: Colors.grey.shade600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Icon(Icons.star, color: Theme.of(context).primaryColor, size: 16),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${widget.barber['rating'] ?? '5.0'} (${widget.barber['cuttings_count'] ?? '0'} completed cuts)',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.barber['name']!,
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${widget.salonName} • ${widget.barber['experience'] ?? '0'} yrs exp',
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(Icons.star, color: Theme.of(context).primaryColor, size: 16),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    '${widget.barber['rating'] ?? '5.0'} (${widget.barber['cuttings_count'] ?? '0'} completed cuts)',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: _getStatusColor(widget.barber['status'] ?? 'Free').withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 6,
+                                        height: 6,
+                                        decoration: BoxDecoration(
+                                          color: _getStatusColor(widget.barber['status'] ?? 'Free'),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        widget.barber['status'] ?? 'Free',
+                                        style: GoogleFonts.poppins(
+                                          color: _getStatusTextColor(widget.barber['status'] ?? 'Free'),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (widget.barber['details'] != null && widget.barber['details']!.isNotEmpty) ...[
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      widget.barber['details']!,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.grey.shade500,
+                                        fontSize: 11,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -376,75 +474,89 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey.shade200,
+                          disabledForegroundColor: Colors.grey.shade500,
                         ),
-                        onPressed: () async {
-                          // Show loading spinner
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const Center(child: CircularProgressIndicator()),
-                          );
-    
-                          try {
-                            final customerName = await AuthService.getUserName();
-                            final dateStr = '${dates[_selectedDateIndex]['month']} ${dates[_selectedDateIndex]['date']}';
-                            final timeStr = times[_selectedTimeIndex];
-                            final serviceTitle = services[_selectedServiceIndex]['title'];
-                            final priceVal = (services[_selectedServiceIndex]['price'] as num).toDouble();
-                            final barberNameVal = widget.barber['name'] ?? 'Unknown Barber';
-    
-                            final newBooking = BookingModel(
-                              id: '', // Backend will assign ID
-                              salonId: widget.salonId,
-                              customerName: customerName,
-                              serviceName: serviceTitle,
-                              time: '$dateStr, $timeStr',
-                              price: priceVal,
-                              barberName: barberNameVal,
-                            );
-    
-                            final success = await BookingService.createBooking(widget.salonId, newBooking);
-    
-                            if (context.mounted) {
-                              Navigator.pop(context); // Dismiss loading spinner
-                            }
-    
-                            if (success) {
-                              final details = {
-                                'salonName': widget.salonName,
-                                'barber': barberNameVal,
-                                'service': serviceTitle,
-                                'price': priceVal.toStringAsFixed(2),
-                                'date': dateStr,
-                                'time': timeStr,
-                              };
-    
-                              if (context.mounted) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => BookingConfirmationScreen(
-                                      bookingDetails: details,
-                                    ),
-                                  ),
+                        onPressed: widget.barber['status']?.toLowerCase() == 'free'
+                            ? () async {
+                                // Show loading spinner
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => const Center(child: CircularProgressIndicator()),
                                 );
+          
+                                try {
+                                  final customerName = await AuthService.getUserName();
+                                  final dateStr = '${dates[_selectedDateIndex]['month']} ${dates[_selectedDateIndex]['date']}';
+                                  final timeStr = times[_selectedTimeIndex];
+                                  final serviceTitle = services[_selectedServiceIndex]['title'];
+                                  final priceVal = (services[_selectedServiceIndex]['price'] as num).toDouble();
+                                  final barberNameVal = widget.barber['name'] ?? 'Unknown Barber';
+          
+                                  final newBooking = BookingModel(
+                                    id: '', // Backend will assign ID
+                                    salonId: widget.salonId,
+                                    customerName: customerName,
+                                    serviceName: serviceTitle,
+                                    time: '$dateStr, $timeStr',
+                                    price: priceVal,
+                                    barberName: barberNameVal,
+                                  );
+          
+                                  final success = await BookingService.createBooking(widget.salonId, newBooking);
+          
+                                  if (context.mounted) {
+                                    Navigator.pop(context); // Dismiss loading spinner
+                                  }
+          
+                                  if (success) {
+                                    final details = {
+                                      'salonName': widget.salonName,
+                                      'barber': barberNameVal,
+                                      'service': serviceTitle,
+                                      'price': priceVal.toStringAsFixed(2),
+                                      'date': dateStr,
+                                      'time': timeStr,
+                                    };
+          
+                                    if (context.mounted) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => BookingConfirmationScreen(
+                                            bookingDetails: details,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Failed to book appointment. Please try again.')),
+                                      );
+                                    }
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    Navigator.pop(context); // Dismiss loading if it was open
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('An error occurred: $e')),
+                                    );
+                                  }
+                                }
                               }
-                            } else {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Failed to book appointment. Please try again.')),
-                                );
-                              }
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              Navigator.pop(context); // Dismiss loading if it was open
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('An error occurred: $e')),
-                              );
-                            }
-                          }
-                        },
-                        child: const Text('Book Now'),
+                            : null,
+                        child: Text(
+                          widget.barber['status']?.toLowerCase() == 'free'
+                              ? 'Book Now'
+                              : 'Barber is ${widget.barber['status'] ?? 'Unavailable'}',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ),
                   ],

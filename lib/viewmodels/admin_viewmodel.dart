@@ -113,12 +113,28 @@ class AdminViewModel extends ChangeNotifier {
     }
   }
 
-  void updateBarberStatus(String id, BarberStatus newStatus, [String? newDetails]) {
+  Future<void> updateBarberStatus(String id, BarberStatus newStatus, [String? newDetails]) async {
     final index = _barbers.indexWhere((b) => b.id == id);
-    if (index != -1) {
+    if (index != -1 && _salonId != null) {
+      final oldStatus = _barbers[index].status;
+      final oldDetails = _barbers[index].details;
+
       _barbers[index].status = newStatus;
       _barbers[index].details = newDetails;
       notifyListeners();
+
+      final success = await SalonService.updateBarberStatus(
+        _salonId!,
+        int.parse(id),
+        newStatus.label,
+        newDetails,
+      );
+
+      if (!success) {
+        _barbers[index].status = oldStatus;
+        _barbers[index].details = oldDetails;
+        notifyListeners();
+      }
     }
   }
 }

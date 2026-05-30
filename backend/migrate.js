@@ -19,6 +19,11 @@ async function migrate() {
         await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;`);
         console.log("Added profile_pic to users.");
 
+        // Add status and details to users (for barbers)
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Free';`);
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS details TEXT;`);
+        console.log("Added status and details columns to users.");
+
         // Create bookings table
         await pool.query(`
             CREATE TABLE IF NOT EXISTS bookings (
