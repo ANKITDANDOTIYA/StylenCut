@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/home_screen.dart';
 import 'package:barber_flow/screens/user/my_bookings_screen.dart';
-import 'package:barber_flow/screens/admin/admin_main_screen.dart';
-import 'package:barber_flow/services/auth_service.dart';
-import 'package:barber_flow/screens/auth/login_screen.dart';
+import 'package:barber_flow/screens/user/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final int initialIndex;
@@ -17,22 +15,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late int _currentIndex;
-  String _role = 'user';
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
-    _loadRole();
-  }
-
-  Future<void> _loadRole() async {
-    final role = await AuthService.getRole();
-    if (mounted) {
-      setState(() {
-        _role = role ?? 'user';
-      });
-    }
   }
 
   @override
@@ -41,44 +28,7 @@ class _MainScreenState extends State<MainScreen> {
       const HomeScreen(),
       const Scaffold(body: Center(child: Text('Explore Data Here'))),
       const MyBookingsScreen(),
-      Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Profile Data Here'),
-              const SizedBox(height: 20),
-              if (_role == 'admin') ...[
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const AdminMainScreen()),
-                    );
-                  },
-                  child: const Text('Go to Admin Panel'),
-                ),
-                const SizedBox(height: 20),
-              ],
-              ElevatedButton(
-                onPressed: () async {
-                  await AuthService.logout();
-                  if (context.mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      (route) => false,
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Logout'),
-              ),
-            ],
-          ),
-        ),
-      ),
+      const ProfileScreen(),
     ];
 
     return Scaffold(

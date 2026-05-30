@@ -24,6 +24,7 @@ class AuthService {
         await prefs.setString('token', data['token']);
         await prefs.setString('role', data['role'] ?? 'user');
         await prefs.setString('name', data['user']['name'] ?? '');
+        await prefs.setString('email', data['user']['email'] ?? '');
         final userId = data['user']['id'];
         if (userId != null) {
           await prefs.setInt('userId', userId is int ? userId : (int.tryParse(userId.toString()) ?? -1));
@@ -70,6 +71,7 @@ class AuthService {
     await prefs.remove('token');
     await prefs.remove('role');
     await prefs.remove('name');
+    await prefs.remove('email');
     await prefs.remove('userId');
   }
 
@@ -93,5 +95,10 @@ class AuthService {
   static Future<String> getUserName() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('name') ?? 'Guest Client';
+  }
+
+  static Future<String> getUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email') ?? 'client@barberflow.com';
   }
 }
