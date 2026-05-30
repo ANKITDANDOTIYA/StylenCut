@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/admin/admin_status_modal.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
+import '../../constants.dart';
 
 
 class AdminDashboardScreen extends StatelessWidget {
@@ -140,7 +141,16 @@ class AdminDashboardScreen extends StatelessWidget {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.grey.shade200,
-                      child: const Icon(Icons.person, color: Colors.grey),
+                      backgroundImage: barber.profilePic != null && barber.profilePic!.isNotEmpty
+                          ? NetworkImage(
+                              barber.profilePic!.startsWith('http')
+                                  ? barber.profilePic!
+                                  : '${AppConstants.backendUrl}${barber.profilePic}',
+                            )
+                          : null,
+                      child: barber.profilePic == null || barber.profilePic!.isEmpty
+                          ? const Icon(Icons.person, color: Colors.grey)
+                          : null,
                     ),
                     title: Text(
                       barber.name,

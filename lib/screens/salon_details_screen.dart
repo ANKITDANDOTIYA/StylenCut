@@ -252,52 +252,83 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade200),
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.grey.shade100, width: 1.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.all(12),
-                                leading: CircleAvatar(
-                                  radius: 30,
-                                  backgroundColor: Colors.grey.shade200,
-                                  backgroundImage: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
-                                      ? NetworkImage(
-                                          barber['profile_pic']!.startsWith('http')
-                                              ? barber['profile_pic']!
-                                              : '${AppConstants.backendUrl}${barber['profile_pic']}',
-                                        )
-                                      : null,
-                                  child: barber['profile_pic'] == null || barber['profile_pic']!.isEmpty
-                                      ? const Icon(Icons.person, color: Colors.grey)
-                                      : null,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                leading: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.1), width: 2),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: Colors.grey.shade100,
+                                    backgroundImage: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
+                                        ? NetworkImage(
+                                            barber['profile_pic']!.startsWith('http')
+                                                ? barber['profile_pic']!
+                                                : '${AppConstants.backendUrl}${barber['profile_pic']}',
+                                          )
+                                        : null,
+                                    child: barber['profile_pic'] == null || barber['profile_pic']!.isEmpty
+                                        ? const Icon(Icons.person, color: Colors.grey)
+                                        : null,
+                                  ),
                                 ),
                                 title: Text(
                                   barber['name']!,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 18,
+                                    fontSize: 17,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
                                   ),
                                 ),
                                 subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 6,
+                                  padding: const EdgeInsets.only(top: 6.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         barber['role']!,
                                         style: GoogleFonts.poppins(
-                                          color: Colors.grey.shade600,
+                                          color: Colors.grey.shade500,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      const Icon(Icons.star, color: Colors.amber, size: 14),
-                                      Text(
-                                        '${barber['rating'] ?? '5.0'} (${barber['cuttings_count'] ?? '0'} cuts)',
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13,
-                                          color: Colors.grey.shade700,
-                                        ),
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${barber['rating'] ?? '5.0'}',
+                                            style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                              color: Colors.grey.shade800,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            '(${barber['cuttings_count'] ?? '0'} cuts)',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade500,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -344,14 +375,14 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: widget.salon.isOpen
                                         ? Theme.of(context).primaryColor
-                                        : Colors.grey.shade300,
+                                        : Colors.grey.shade200,
                                     foregroundColor: widget.salon.isOpen
                                         ? Colors.white
-                                        : Colors.grey.shade600,
+                                        : Colors.grey.shade500,
                                     elevation: 0,
-                                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                   child: const Text('Book'),

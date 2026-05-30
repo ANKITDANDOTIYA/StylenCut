@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../viewmodels/salon_viewmodel.dart';
 import '../../viewmodels/admin_viewmodel.dart';
 import '../../constants.dart';
@@ -35,108 +37,159 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final experienceController = TextEditingController();
-    final profilePicController = TextEditingController();
+    File? pickedImage;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(
-            'Add New Barber',
-            style: GoogleFonts.manrope(fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(
+                'Add New Barber',
+                style: GoogleFonts.manrope(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        try {
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                            source: ImageSource.gallery,
+                            maxWidth: 512,
+                            maxHeight: 512,
+                            imageQuality: 85,
+                          );
+                          if (image != null) {
+                            setDialogState(() {
+                              pickedImage = File(image.path);
+                            });
+                          }
+                        } catch (e) {
+                          debugPrint('Error picking image: $e');
+                        }
+                      },
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.grey.shade100,
+                            backgroundImage: pickedImage != null ? FileImage(pickedImage!) : null,
+                            child: pickedImage == null
+                                ? Icon(Icons.person_add_alt_1_outlined, size: 36, color: Colors.grey.shade400)
+                                : null,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                    ),
+                    TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                    ),
+                    TextField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                    ),
+                    TextField(
+                      controller: experienceController,
+                      decoration: const InputDecoration(labelText: 'Experience (years)'),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
                 ),
-                TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                TextField(
-                  controller: experienceController,
-                  decoration: const InputDecoration(labelText: 'Experience (years)'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: profilePicController,
-                  decoration: const InputDecoration(labelText: 'Profile Picture URL'),
+                ElevatedButton(
+                  onPressed: () async {
+                    final name = nameController.text.trim();
+                    final email = emailController.text.trim();
+                    final password = passwordController.text.trim();
+                    final expText = experienceController.text.trim();
+
+                    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please fill all required fields')),
+                      );
+                      return;
+                    }
+
+                    final expVal = int.tryParse(expText);
+
+                    final viewModel = Provider.of<SalonViewModel>(context, listen: false);
+                    if (viewModel.adminSalon != null) {
+                      String? profilePicUrl;
+                      if (pickedImage != null) {
+                        final uploadedUrl = await viewModel.uploadSalonThumbnail(pickedImage!.path);
+                        profilePicUrl = uploadedUrl;
+                      }
+
+                      final success = await viewModel.createBarber(
+                        viewModel.adminSalon!.id,
+                        name,
+                        email,
+                        password,
+                        experience: expVal,
+                        profilePic: profilePicUrl,
+                      );
+
+                      if (success) {
+                        if (context.mounted) {
+                          // Dynamically sync AdminViewModel statistics and barbers lists
+                          Provider.of<AdminViewModel>(context, listen: false)
+                              .initializeSalon(viewModel.adminSalon!.id);
+                          
+                          Navigator.pop(context);
+                          setState(() {
+                            _fetchBarbers(); // Refresh the list
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Barber added successfully')),
+                          );
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Failed to add barber')),
+                          );
+                        }
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Add'),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final name = nameController.text.trim();
-                final email = emailController.text.trim();
-                final password = passwordController.text.trim();
-                final expText = experienceController.text.trim();
-                final profilePic = profilePicController.text.trim();
-
-                if (name.isEmpty || email.isEmpty || password.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill all required fields')),
-                  );
-                  return;
-                }
-
-                final expVal = int.tryParse(expText);
-
-                final viewModel = Provider.of<SalonViewModel>(context, listen: false);
-                if (viewModel.adminSalon != null) {
-                  final success = await viewModel.createBarber(
-                    viewModel.adminSalon!.id,
-                    name,
-                    email,
-                    password,
-                    experience: expVal,
-                    profilePic: profilePic.isEmpty ? null : profilePic,
-                  );
-
-                  if (success) {
-                    if (context.mounted) {
-                      // Dynamically sync AdminViewModel statistics and barbers lists
-                      Provider.of<AdminViewModel>(context, listen: false)
-                          .initializeSalon(viewModel.adminSalon!.id);
-                      
-                      Navigator.pop(context);
-                      setState(() {
-                        _fetchBarbers(); // Refresh the list
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Barber added successfully')),
-                      );
-                    }
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to add barber')),
-                      );
-                    }
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Add'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -146,105 +199,165 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
     final nameController = TextEditingController(text: barber['name']);
     final emailController = TextEditingController(text: barber['email']);
     final experienceController = TextEditingController(text: barber['experience']?.toString() ?? '');
-    final profilePicController = TextEditingController(text: barber['profile_pic'] ?? '');
+    File? pickedImage;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(
-            'Edit Barber Details',
-            style: GoogleFonts.manrope(fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            ImageProvider? imageProvider;
+            if (pickedImage != null) {
+              imageProvider = FileImage(pickedImage!);
+            } else if (barber['profile_pic'] != null && barber['profile_pic'].toString().isNotEmpty) {
+              final path = barber['profile_pic'].toString();
+              final url = path.startsWith('http') ? path : '${AppConstants.backendUrl}$path';
+              imageProvider = NetworkImage(url);
+            }
+
+            return AlertDialog(
+              title: Text(
+                'Edit Barber Details',
+                style: GoogleFonts.manrope(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        try {
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                            source: ImageSource.gallery,
+                            maxWidth: 512,
+                            maxHeight: 512,
+                            imageQuality: 85,
+                          );
+                          if (image != null) {
+                            setDialogState(() {
+                              pickedImage = File(image.path);
+                            });
+                          }
+                        } catch (e) {
+                          debugPrint('Error picking image: $e');
+                        }
+                      },
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 45,
+                            backgroundColor: Colors.grey.shade100,
+                            backgroundImage: imageProvider,
+                            child: imageProvider == null
+                                ? Icon(Icons.person_outline, size: 36, color: Colors.grey.shade400)
+                                : null,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                    ),
+                    TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                    ),
+                    TextField(
+                      controller: experienceController,
+                      decoration: const InputDecoration(labelText: 'Experience (years)'),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
                 ),
-                TextField(
-                  controller: experienceController,
-                  decoration: const InputDecoration(labelText: 'Experience (years)'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: profilePicController,
-                  decoration: const InputDecoration(labelText: 'Profile Picture URL'),
+                ElevatedButton(
+                  onPressed: () async {
+                    final name = nameController.text.trim();
+                    final email = emailController.text.trim();
+                    final expText = experienceController.text.trim();
+
+                    if (name.isEmpty || email.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Name and Email are required')),
+                      );
+                      return;
+                    }
+
+                    final expVal = int.tryParse(expText);
+
+                    final viewModel = Provider.of<SalonViewModel>(context, listen: false);
+                    if (viewModel.adminSalon != null) {
+                      final barberId = int.tryParse(barber['id']?.toString() ?? '');
+                      if (barberId == null) return;
+
+                      String? profilePicUrl = barber['profile_pic'];
+                      if (pickedImage != null) {
+                        final uploadedUrl = await viewModel.uploadSalonThumbnail(pickedImage!.path);
+                        profilePicUrl = uploadedUrl;
+                      }
+                      
+                      final success = await viewModel.updateBarber(
+                        viewModel.adminSalon!.id,
+                        barberId,
+                        name,
+                        email,
+                        experience: expVal,
+                        profilePic: profilePicUrl,
+                      );
+
+                      if (success) {
+                        if (context.mounted) {
+                          // Dynamically sync AdminViewModel statistics and barbers lists
+                          Provider.of<AdminViewModel>(context, listen: false)
+                              .initializeSalon(viewModel.adminSalon!.id);
+                          
+                          Navigator.pop(context);
+                          setState(() {
+                            _fetchBarbers(); // Refresh the list
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Barber updated successfully')),
+                          );
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Failed to update barber')),
+                          );
+                        }
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Save'),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final name = nameController.text.trim();
-                final email = emailController.text.trim();
-                final expText = experienceController.text.trim();
-                final profilePic = profilePicController.text.trim();
-
-                if (name.isEmpty || email.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Name and Email are required')),
-                  );
-                  return;
-                }
-
-                final expVal = int.tryParse(expText);
-
-                final viewModel = Provider.of<SalonViewModel>(context, listen: false);
-                if (viewModel.adminSalon != null) {
-                  final barberId = int.tryParse(barber['id']?.toString() ?? '');
-                  if (barberId == null) return;
-                  
-                  final success = await viewModel.updateBarber(
-                    viewModel.adminSalon!.id,
-                    barberId,
-                    name,
-                    email,
-                    experience: expVal,
-                    profilePic: profilePic.isEmpty ? null : profilePic,
-                  );
-
-                  if (success) {
-                    if (context.mounted) {
-                      // Dynamically sync AdminViewModel statistics and barbers lists
-                      Provider.of<AdminViewModel>(context, listen: false)
-                          .initializeSalon(viewModel.adminSalon!.id);
-                      
-                      Navigator.pop(context);
-                      setState(() {
-                        _fetchBarbers(); // Refresh the list
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Barber updated successfully')),
-                      );
-                    }
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to update barber')),
-                      );
-                    }
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Save'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -315,6 +428,8 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                         children: [
                           Text(
                             barber['name'] ?? 'Unknown',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.manrope(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -351,24 +466,15 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 4,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey.shade400,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '${barber['cuttings_count'] ?? 0} cuts completed',
-                                style: GoogleFonts.manrope(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 13,
-                                ),
-                              ),
                             ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${barber['cuttings_count'] ?? 0} cuts completed',
+                            style: GoogleFonts.manrope(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:barber_flow/models/barber_model.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
+import '../../constants.dart';
 
 class AdminStatusModal extends StatelessWidget {
   final BarberModel barber;
@@ -78,7 +79,16 @@ class AdminStatusModal extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: Colors.grey.shade200,
                   radius: 24,
-                  child: const Icon(Icons.person, color: Colors.grey),
+                  backgroundImage: barber.profilePic != null && barber.profilePic!.isNotEmpty
+                      ? NetworkImage(
+                          barber.profilePic!.startsWith('http')
+                              ? barber.profilePic!
+                              : '${AppConstants.backendUrl}${barber.profilePic}',
+                        )
+                      : null,
+                  child: barber.profilePic == null || barber.profilePic!.isEmpty
+                      ? const Icon(Icons.person, color: Colors.grey)
+                      : null,
                 ),
                 const SizedBox(width: 16),
                 Column(
