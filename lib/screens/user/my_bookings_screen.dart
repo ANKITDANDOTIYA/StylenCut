@@ -4,6 +4,7 @@ import 'package:barber_flow/models/booking_model.dart';
 import 'package:barber_flow/services/booking_service.dart';
 import 'package:barber_flow/services/auth_service.dart';
 import 'package:barber_flow/screens/user/rate_review_screen.dart';
+import '../../constants.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
@@ -172,7 +173,16 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                       CircleAvatar(
                                         radius: 20,
                                         backgroundColor: Colors.grey.shade100,
-                                        child: const Icon(Icons.person, color: Colors.grey, size: 20),
+                                        backgroundImage: booking.barberProfilePic != null && booking.barberProfilePic!.isNotEmpty
+                                            ? NetworkImage(
+                                                booking.barberProfilePic!.startsWith('http')
+                                                    ? booking.barberProfilePic!
+                                                    : '${AppConstants.backendUrl}${booking.barberProfilePic}',
+                                              )
+                                            : null,
+                                        child: booking.barberProfilePic == null || booking.barberProfilePic!.isEmpty
+                                            ? const Icon(Icons.person, color: Colors.grey, size: 20)
+                                            : null,
                                       ),
                                       const SizedBox(width: 12),
                                       Column(

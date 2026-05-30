@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
+import '../../constants.dart';
 
 class AdminTodayBookingsScreen extends StatelessWidget {
   const AdminTodayBookingsScreen({super.key});
@@ -149,7 +150,16 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                           CircleAvatar(
                             radius: 24,
                             backgroundColor: Colors.grey.shade100,
-                            child: const Icon(Icons.person, color: Colors.grey),
+                            backgroundImage: booking.customerProfilePic != null && booking.customerProfilePic!.isNotEmpty
+                                ? NetworkImage(
+                                    booking.customerProfilePic!.startsWith('http')
+                                        ? booking.customerProfilePic!
+                                        : '${AppConstants.backendUrl}${booking.customerProfilePic}',
+                                  )
+                                : null,
+                            child: booking.customerProfilePic == null || booking.customerProfilePic!.isEmpty
+                                ? const Icon(Icons.person, color: Colors.grey)
+                                : null,
                           ),
                           const SizedBox(width: 16),
                           Expanded(

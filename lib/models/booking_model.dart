@@ -9,6 +9,8 @@ class BookingModel {
   final String barberName;
   final String status;
   final String salonName;
+  final String? customerProfilePic;
+  final String? barberProfilePic;
 
   BookingModel({
     required this.id,
@@ -20,6 +22,8 @@ class BookingModel {
     required this.barberName,
     this.status = 'Pending',
     this.salonName = '',
+    this.customerProfilePic,
+    this.barberProfilePic,
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +37,8 @@ class BookingModel {
       barberName: json['barber_name'] ?? '',
       status: json['status'] ?? 'Pending',
       salonName: json['salon_name'] ?? '',
+      customerProfilePic: json['customer_profile_pic'],
+      barberProfilePic: json['barber_profile_pic'],
     );
   }
 

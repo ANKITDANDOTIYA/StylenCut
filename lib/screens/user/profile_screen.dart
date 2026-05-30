@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:barber_flow/services/auth_service.dart';
+import 'package:barber_flow/services/salon_service.dart';
 import 'package:barber_flow/screens/auth/login_screen.dart';
 import 'package:barber_flow/screens/admin/admin_main_screen.dart';
+import 'package:barber_flow/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,6 +19,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userEmail = 'client@barberflow.com';
   String _userRole = 'user';
   bool _isLoading = true;
+
+  String? _userProfilePic;
+  bool _isUploadingPic = false;
 
   // Modern UI states
   bool _pushNotifications = true;
@@ -34,12 +40,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       
       // Attempt to retrieve email (with fallback)
       final email = await AuthService.getUserEmail();
+      final profilePic = await AuthService.getUserProfilePic();
 
       if (mounted) {
         setState(() {
           _userName = name;
           _userRole = role ?? 'user';
           _userEmail = email;
+          _userProfilePic = profilePic;
           _isLoading = false;
         });
       }
@@ -48,6 +56,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _isLoading = false;
         });
+      }
+    }
+  }
+
+  Future<void> _pickAndUploadProfilePic() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+
+      if (image == null) return;
+
+      setState(() {
+        _isUploadingPic = true;
+      });
+
+      // Upload using SalonService
+      final uploadedUrl = await SalonService.uploadThumbnail(image.path);
+
+      if (uploadedUrl != null) {
+        await AuthService.saveUserProfilePic(uploadedUrl);
+
+        // Update the profile picture in the database
+        final userId = await AuthService.getUserId();
+        final userEmail = await AuthService.getUserEmail();
+
+        await AuthService.updateProfilePicOnServer(
+          userId: userId,
+          email: userEmail,
+          profilePic: uploadedUrl,
+        );
+
+        if (mounted) {
+          setState(() {
+            _userProfilePic = uploadedUrl;
+            _isUploadingPic = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile picture updated successfully!')),
+          );
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _isUploadingPic = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to upload profile picture. Please try again.')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isUploadingPic = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking image: $e')),
+        );
       }
     }
   }
@@ -157,41 +228,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         // User Avatar
-                        Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: primaryColor, width: 2),
+                        GestureDetector(
+                          onTap: _isUploadingPic ? null : _pickAndUploadProfilePic,
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: primaryColor, width: 2),
+                                ),
+                                child: _isUploadingPic
+                                    ? SizedBox(
+                                        width: 84,
+                                        height: 84,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(24.0),
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                            valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                                          ),
+                                        ),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 42,
+                                        backgroundColor: primaryColor.withOpacity(0.1),
+                                        backgroundImage: _userProfilePic != null && _userProfilePic!.isNotEmpty
+                                            ? NetworkImage(
+                                                _userProfilePic!.startsWith('http')
+                                                    ? _userProfilePic!
+                                                    : '${AppConstants.backendUrl}$_userProfilePic',
+                                              )
+                                            : null,
+                                        child: _userProfilePic == null || _userProfilePic!.isEmpty
+                                            ? Text(
+                                                _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: primaryColor,
+                                                ),
+                                              )
+                                            : null,
+                                      ),
                               ),
-                              child: CircleAvatar(
-                                radius: 42,
-                                backgroundColor: primaryColor.withOpacity(0.1),
-                                child: Text(
-                                  _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryColor,
+                              if (!_isUploadingPic)
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                    size: 14,
                                   ),
                                 ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                color: Colors.black,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Text(

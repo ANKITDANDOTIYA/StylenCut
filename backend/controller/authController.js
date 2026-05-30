@@ -112,4 +112,42 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+// UPDATE PROFILE PIC
+exports.updateProfilePic = async (req, res) => {
+    try {
+        const { userId, email, profilePic } = req.body;
+        const { updateUserProfilePic, updateUserProfilePicByEmail } = require('../models/authModel');
+        
+        let updatedUser;
+        if (userId) {
+            updatedUser = await updateUserProfilePic(userId, profilePic);
+        } else if (email) {
+            updatedUser = await updateUserProfilePicByEmail(email, profilePic);
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "User ID or Email is required"
+            });
+        }
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Profile picture updated in database successfully",
+            user: updatedUser
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+};
     

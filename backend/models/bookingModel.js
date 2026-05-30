@@ -12,7 +12,11 @@ const createBooking = async (salonId, customerName, serviceName, bookingDate, bo
 
 const getBookingsBySalon = async (salonId) => {
     const result = await pool.query(
-        `SELECT * FROM bookings WHERE salon_id = $1 ORDER BY created_at DESC`,
+        `SELECT b.*, u.profile_pic as customer_profile_pic 
+         FROM bookings b
+         LEFT JOIN users u ON b.customer_name = u.name
+         WHERE b.salon_id = $1 
+         ORDER BY b.created_at DESC`,
         [salonId]
     );
     return result.rows;
@@ -20,9 +24,10 @@ const getBookingsBySalon = async (salonId) => {
 
 const getBookingsByCustomer = async (customerName) => {
     const result = await pool.query(
-        `SELECT b.*, s.name as salon_name 
+        `SELECT b.*, s.name as salon_name, u.profile_pic as barber_profile_pic
          FROM bookings b
          LEFT JOIN salons s ON b.salon_id = s.id
+         LEFT JOIN users u ON b.barber_name = u.name AND u.role = 'barber' AND b.salon_id = u.salon_id
          WHERE b.customer_name = $1
          ORDER BY b.created_at DESC`,
         [customerName]

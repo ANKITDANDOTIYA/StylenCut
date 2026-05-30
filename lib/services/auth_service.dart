@@ -73,6 +73,7 @@ class AuthService {
     await prefs.remove('name');
     await prefs.remove('email');
     await prefs.remove('userId');
+    await prefs.remove('profile_pic');
   }
 
   static Future<String?> getToken() async {
@@ -100,5 +101,38 @@ class AuthService {
   static Future<String> getUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('email') ?? 'client@barberflow.com';
+  }
+
+  static Future<String?> getUserProfilePic() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('profile_pic');
+  }
+
+  static Future<void> saveUserProfilePic(String path) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_pic', path);
+  }
+
+  static Future<bool> updateProfilePicOnServer({int? userId, String? email, required String profilePic}) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/profile-pic'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          if (userId != null) 'userId': userId,
+          if (email != null) 'email': email,
+          'profilePic': profilePic,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      print('Error updating profile pic on server: $e');
+      return false;
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/admin/admin_status_modal.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
+import 'package:barber_flow/services/auth_service.dart';
 import '../../constants.dart';
 
 
@@ -33,9 +34,25 @@ class AdminDashboardScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.white.withValues(alpha: 0.15),
-              child: const Icon(Icons.admin_panel_settings, color: Colors.white),
+            child: FutureBuilder<String?>(
+              future: AuthService.getUserProfilePic(),
+              builder: (context, snapshot) {
+                final picPath = snapshot.data;
+                if (picPath != null && picPath.isNotEmpty) {
+                  return CircleAvatar(
+                    backgroundColor: Colors.white,
+                    backgroundImage: NetworkImage(
+                      picPath.startsWith('http')
+                          ? picPath
+                          : '${AppConstants.backendUrl}$picPath',
+                    ),
+                  );
+                }
+                return CircleAvatar(
+                  backgroundColor: Colors.white.withValues(alpha: 0.15),
+                  child: const Icon(Icons.admin_panel_settings, color: Colors.white),
+                );
+              },
             ),
           ),
         ],

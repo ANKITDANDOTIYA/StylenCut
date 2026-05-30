@@ -86,6 +86,8 @@ class AdminViewModel extends ChangeNotifier {
             barberName: b.barberName,
             status: status,
             salonName: b.salonName,
+            customerProfilePic: b.customerProfilePic,
+            barberProfilePic: b.barberProfilePic,
           );
         }
       }

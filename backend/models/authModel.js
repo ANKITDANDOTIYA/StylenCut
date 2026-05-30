@@ -59,10 +59,28 @@ const createBarberUser = async (name, email, password, salonId, experience = nul
     return result.rows[0];
 };
 
+const updateUserProfilePic = async (userId, profilePic) => {
+    const result = await pool.query(
+        "UPDATE users SET profile_pic = $1 WHERE id = $2 RETURNING *",
+        [profilePic, userId]
+    );
+    return result.rows[0];
+};
+
+const updateUserProfilePicByEmail = async (email, profilePic) => {
+    const result = await pool.query(
+        "UPDATE users SET profile_pic = $1 WHERE email = $2 RETURNING *",
+        [profilePic, email]
+    );
+    return result.rows[0];
+};
+
 module.exports = {
     findUserByEmail,
     createUser,
     getBarbersBySalon,
     assignBarberToSalon,
     createBarberUser,
+    updateUserProfilePic,
+    updateUserProfilePicByEmail,
 };
