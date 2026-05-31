@@ -235,4 +235,47 @@ exports.changePassword = async (req, res) => {
         });
     }
 };
+
+exports.updateName = async (req, res) => {
+    try {
+        const { userId, name } = req.body;
+        const { updateUserName } = require('../models/authModel');
+
+        const parsedUserId = parseInt(userId, 10);
+        if (isNaN(parsedUserId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid User ID format"
+            });
+        }
+
+        if (!name || typeof name !== 'string' || name.trim() === "") {
+            return res.status(400).json({
+                success: false,
+                message: "Name is required"
+            });
+        }
+
+        const updatedUser = await updateUserName(parsedUserId, name.trim());
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Username updated successfully",
+            user: updatedUser
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+};
     

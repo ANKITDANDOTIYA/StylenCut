@@ -75,6 +75,14 @@ const updateUserProfilePicByEmail = async (email, profilePic) => {
     return result.rows[0];
 };
 
+const updateUserName = async (userId, name) => {
+    const result = await pool.query(
+        "UPDATE users SET name = $1 WHERE id = $2 RETURNING *",
+        [name, userId]
+    );
+    return result.rows[0];
+};
+
 module.exports = {
     findUserByEmail,
     createUser,
@@ -83,4 +91,5 @@ module.exports = {
     createBarberUser,
     updateUserProfilePic,
     updateUserProfilePicByEmail,
+    updateUserName,
 };

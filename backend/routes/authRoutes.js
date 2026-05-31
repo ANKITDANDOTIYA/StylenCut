@@ -7,6 +7,7 @@ const {
   login,
   updateProfilePic,
   changePassword,
+  updateName,
 } = require("../controller/authController");
 
 
@@ -18,6 +19,8 @@ router.post("/login", login);
 router.put("/profile-pic", updateProfilePic);
 
 router.put("/change-password", changePassword);
+
+router.put("/update-name", updateName);
 
 
 module.exports = router;

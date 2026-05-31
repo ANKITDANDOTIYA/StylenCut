@@ -263,6 +263,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showEditNameDialog() {
+    final nameController = TextEditingController(text: _userName);
+    final isDark = Provider.of<ThemeViewModel>(context, listen: false).isDarkMode;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        title: Text(
+          'Edit Username',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+              decoration: InputDecoration(
+                labelText: 'Username',
+                labelStyle: TextStyle(color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: isDark ? Colors.grey.shade700 : Colors.grey.shade300)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: isDark ? Colors.grey.shade400 : Colors.grey.shade600)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              final newName = nameController.text.trim();
+              if (newName.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Name cannot be empty.')),
+                );
+                return;
+              }
+
+              // Show loading spinner
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(child: CircularProgressIndicator()),
+              );
+
+              try {
+                final userId = await AuthService.getUserId();
+                if (userId == null) {
+                  Navigator.pop(context); // Pop loading spinner
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User session expired. Please log in again.')),
+                  );
+                  return;
+                }
+
+                final result = await AuthService.updateName(
+                  userId: userId,
+                  name: newName,
+                );
+
+                if (context.mounted) {
+                  Navigator.pop(context); // Pop loading spinner
+                }
+
+                if (result['success'] == true) {
+                  if (context.mounted) {
+                    setState(() {
+                      _userName = newName;
+                    });
+                    Navigator.pop(context); // Pop edit name dialog
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Username updated successfully!')),
+                    );
+                  }
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(result['message'] ?? 'Failed to update username.')),
+                    );
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pop(context); // Pop loading spinner
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showHelpCenterSheet() {
     showModalBottomSheet(
       context: context,
@@ -630,21 +738,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
-                Container(
-                  height: 190,
+                const SizedBox(
+                  height: 330,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        primaryColor,
-                        primaryColor.withOpacity(0.85),
-                      ],
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 190,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          primaryColor,
+                          primaryColor.withOpacity(0.85),
+                        ],
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
+                      ),
                     ),
                   ),
                 ),
@@ -730,14 +846,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          _userName,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: _darkMode ? Colors.white : Colors.black87,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 32), // visually balances the edit icon for perfect centering
+                            Text(
+                              _userName,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: _darkMode ? Colors.white : Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, size: 18),
+                              onPressed: _showEditNameDialog,
+                              color: primaryColor,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -786,7 +916,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             
             // Push content below stack overlap
-            const SizedBox(height: 180),
+            const SizedBox(height: 40),
  
             // Profile Sections List
             Padding(

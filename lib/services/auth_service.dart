@@ -158,4 +158,29 @@ class AuthService {
       return {'success': false, 'message': e.toString()};
     }
   }
+
+  static Future<Map<String, dynamic>> updateName({
+    required int userId,
+    required String name,
+  }) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/update-name'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': userId,
+          'name': name,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('name', name);
+      }
+      return data;
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
 }
