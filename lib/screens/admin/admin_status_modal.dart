@@ -44,11 +44,16 @@ class AdminStatusModal extends StatelessWidget {
       },
     ];
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade200;
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -59,7 +64,7 @@ class AdminStatusModal extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: isDark ? Colors.white24 : Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -70,6 +75,7 @@ class AdminStatusModal extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
               ),
               textAlign: TextAlign.center,
             ),
@@ -77,7 +83,7 @@ class AdminStatusModal extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
                   radius: 24,
                   backgroundImage: barber.profilePic != null && barber.profilePic!.isNotEmpty
                       ? NetworkImage(
@@ -87,7 +93,7 @@ class AdminStatusModal extends StatelessWidget {
                         )
                       : null,
                   child: barber.profilePic == null || barber.profilePic!.isEmpty
-                      ? const Icon(Icons.person, color: Colors.grey)
+                      ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey)
                       : null,
                 ),
                 const SizedBox(width: 16),
@@ -99,12 +105,13 @@ class AdminStatusModal extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     Text(
                       'Master Barber',
                       style: GoogleFonts.poppins(
-                        color: Colors.grey.shade600,
+                        color: isDark ? Colors.white70 : Colors.grey.shade600,
                         fontSize: 14,
                       ),
                     ),
@@ -118,6 +125,7 @@ class AdminStatusModal extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 16),
@@ -130,11 +138,11 @@ class AdminStatusModal extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade200,
+                    color: isSelected ? Theme.of(context).primaryColor : borderColor,
                     width: isSelected ? 2 : 1,
                   ),
                   borderRadius: BorderRadius.circular(12),
-                  color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.05) : Colors.white,
+                  color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.05) : cardColor,
                 ),
                 child: ListTile(
                   leading: Icon(
@@ -145,12 +153,13 @@ class AdminStatusModal extends StatelessWidget {
                     status['title'] as String,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                   subtitle: Text(
                     status['subtitle'] as String,
                     style: GoogleFonts.poppins(
-                      color: Colors.grey.shade600,
+                      color: isDark ? Colors.white70 : Colors.grey.shade600,
                     ),
                   ),
                   onTap: () {

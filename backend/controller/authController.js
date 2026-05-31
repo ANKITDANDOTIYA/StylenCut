@@ -2,9 +2,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { findUserByEmail, createUser } = require('../models/authModel');
 
+const pool = require('../config/db');
+
 // SIGNUP
 
 exports.signup = async (req, res) => {
+    const client = await pool.connect();
     try {
         const {email, password, name, role, salonName, address, phoneNumber, openingTime, closingTime} = req.body;
 
@@ -17,21 +20,53 @@ exports.signup = async (req, res) => {
             });
         }
 
+        if (role === 'admin') {
+            if (!salonName || typeof salonName !== 'string' || salonName.trim() === "") {
+                return res.status(400).json({
+                    success: false,
+                    message: "Salon Name is required for Admin accounts"
+                });
+            }
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await createUser(name, email, hashedPassword, role || 'user');
+        await client.query('BEGIN');
+
+        // Insert new user
+        const userResult = await client.query(
+            `INSERT INTO users (name, email, password, role)
+             VALUES ($1, $2, $3, $4) RETURNING *`,
+            [name, email, hashedPassword, role || 'user']
+        );
+        const newUser = userResult.rows[0];
         
         let newSalon = null;
-        if (newUser.role === 'admin' && salonName) {
-            const { createSalon } = require('../models/salonModel');
-            const data = {
-                address: address,
-                phone_number: phoneNumber,
-                opening_time: openingTime,
-                closing_time: closingTime
-            };
-            newSalon = await createSalon(newUser.id, salonName, data);
+        if (newUser.role === 'admin') {
+            // Sanitize times: convert empty strings or whitespace to null
+            let opt = (openingTime && typeof openingTime === 'string' && openingTime.trim() !== "") ? openingTime.trim() : null;
+            let clt = (closingTime && typeof closingTime === 'string' && closingTime.trim() !== "") ? closingTime.trim() : null;
+
+            // Simple validation to check if times are format-compliant.
+            // If they are provided, check if Postgres will accept them. A loose regex match for standard formats:
+            const timePattern = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?\s*(AM|PM)?$/i;
+            if (opt && !timePattern.test(opt)) {
+                opt = "09:00:00"; // fallback
+            }
+            if (clt && !timePattern.test(clt)) {
+                clt = "20:00:00"; // fallback
+            }
+
+            const salonResult = await client.query(
+                `INSERT INTO salons 
+                (owner_id, name, address, phone_number, opening_time, closing_time, thumbnail_pic)
+                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+                [newUser.id, salonName.trim(), address || null, phoneNumber || null, opt, clt, null]
+            );
+            newSalon = salonResult.rows[0];
         }
+
+        await client.query('COMMIT');
 
         res.status(201).json({
             success: true,
@@ -39,14 +74,17 @@ exports.signup = async (req, res) => {
             user: newUser,
             salon: newSalon
         });
-        } catch(error){
-            res.status(500).json({
-                success: false,
-                message: "Internal Server Error",
-                error: error.message
-            });
-        }
-    };
+    } catch(error) {
+        await client.query('ROLLBACK');
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    } finally {
+        client.release();
+    }
+};
 
 
     // ================= LOGIN =================

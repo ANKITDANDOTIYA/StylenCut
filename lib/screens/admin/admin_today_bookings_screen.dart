@@ -8,12 +8,16 @@ class AdminTodayBookingsScreen extends StatelessWidget {
   const AdminTodayBookingsScreen({super.key});
 
   Widget _buildStatCard(BuildContext context, {required String title, required String value, required Color color}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade200;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: borderColor),
       ),
       child: Column(
         children: [
@@ -31,7 +35,7 @@ class AdminTodayBookingsScreen extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Colors.grey.shade500,
+              color: isDark ? Colors.white54 : Colors.grey.shade500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -45,13 +49,23 @@ class AdminTodayBookingsScreen extends StatelessWidget {
     final viewModel = Provider.of<AdminViewModel>(context);
     final bookings = viewModel.todayBookings;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade200;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Today\'s Bookings',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w800),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black87,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -64,7 +78,7 @@ class AdminTodayBookingsScreen extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey.shade600,
+                color: isDark ? Colors.white70 : Colors.grey.shade600,
               ),
             ),
             const SizedBox(height: 16),
@@ -113,9 +127,9 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: borderColor),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +151,7 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey.shade800,
+                              color: isDark ? Colors.white : Colors.grey.shade800,
                             ),
                           ),
                         ],
@@ -184,8 +198,8 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: booking.status == 'Completed'
-                                            ? Colors.green.shade50
-                                            : Colors.orange.shade50,
+                                            ? (isDark ? Colors.green.withValues(alpha: 0.15) : Colors.green.shade50)
+                                            : (isDark ? Colors.orange.withValues(alpha: 0.15) : Colors.orange.shade50),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
@@ -194,8 +208,8 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
                                           color: booking.status == 'Completed'
-                                              ? Colors.green.shade700
-                                              : Colors.orange.shade700,
+                                              ? (isDark ? Colors.greenAccent : Colors.green.shade700)
+                                              : (isDark ? Colors.orangeAccent : Colors.orange.shade700),
                                         ),
                                       ),
                                     ),
@@ -205,7 +219,7 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                                 Text(
                                   booking.serviceName,
                                   style: GoogleFonts.poppins(
-                                    color: Colors.grey.shade600,
+                                    color: isDark ? Colors.white70 : Colors.grey.shade600,
                                     fontSize: 14,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -227,7 +241,7 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                             child: Text(
                               'Barber: ${booking.barberName}',
                               style: GoogleFonts.poppins(
-                                color: Colors.grey.shade600,
+                                color: isDark ? Colors.white70 : Colors.grey.shade600,
                                 fontSize: 14,
                               ),
                               overflow: TextOverflow.ellipsis,

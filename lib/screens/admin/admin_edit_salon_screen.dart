@@ -144,17 +144,18 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
   }
 
   Widget _buildPlaceholder() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: Colors.grey.shade100,
+      color: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.add_photo_alternate_outlined, size: 48, color: Colors.grey.shade400),
+          Icon(Icons.add_photo_alternate_outlined, size: 48, color: isDark ? Colors.white30 : Colors.grey.shade400),
           const SizedBox(height: 8),
           Text(
             'Select Salon Thumbnail',
             style: GoogleFonts.manrope(
-              color: Colors.grey.shade600,
+              color: isDark ? Colors.white70 : Colors.grey.shade600,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -163,7 +164,7 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
           Text(
             'Tap to browse gallery',
             style: GoogleFonts.manrope(
-              color: Colors.grey.shade400,
+              color: isDark ? Colors.white30 : Colors.grey.shade400,
               fontSize: 12,
             ),
           ),
@@ -174,13 +175,23 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade200;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Edit Salon Details',
-          style: GoogleFonts.manrope(fontWeight: FontWeight.w800),
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black87,
+        elevation: 0,
       ),
       body: Consumer<SalonViewModel>(
         builder: (context, viewModel, child) {
@@ -201,7 +212,7 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
                     style: GoogleFonts.manrope(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade700,
+                      color: isDark ? Colors.white70 : Colors.grey.shade700,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -210,9 +221,9 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
                     child: Container(
                       height: 180,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: borderColor),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.02),
@@ -326,23 +337,27 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
+      style: GoogleFonts.manrope(color: isDark ? Colors.white : Colors.black87),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.grey.shade700),
         hintText: hint,
-        prefixIcon: Icon(icon, color: Colors.grey.shade600),
+        hintStyle: TextStyle(color: isDark ? Colors.white30 : Colors.grey.shade400),
+        prefixIcon: Icon(icon, color: isDark ? Colors.white54 : Colors.grey.shade600),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade200),
+          borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade200),
+          borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
         ),
       ),
     );

@@ -74,9 +74,11 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     if (_initializing) {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +90,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
                 style: GoogleFonts.manrope(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade700,
+                  color: isDark ? Colors.white70 : Colors.grey.shade700,
                 ),
               ),
             ],
@@ -99,7 +101,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
 
     if (_errorMessage != null) {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Center(
@@ -113,7 +115,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
                   style: GoogleFonts.manrope(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -121,7 +123,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
                   _errorMessage!,
                   style: GoogleFonts.manrope(
                     fontSize: 14,
-                    color: Colors.grey.shade600,
+                    color: isDark ? Colors.white70 : Colors.grey.shade600,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -208,16 +210,23 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade100;
+    
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Admin Settings',
-          style: GoogleFonts.manrope(fontWeight: FontWeight.w800),
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black87,
       ),
       body: Consumer<SalonViewModel>(
         builder: (context, viewModel, child) {
@@ -238,9 +247,9 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade100),
+                    border: Border.all(color: borderColor),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.02),
@@ -274,7 +283,7 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                               style: GoogleFonts.manrope(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -282,7 +291,7 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                               salon?.address ?? 'No address set',
                               style: GoogleFonts.manrope(
                                 fontSize: 13,
-                                color: Colors.grey.shade600,
+                                color: isDark ? Colors.white70 : Colors.grey.shade600,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -300,7 +309,7 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                   style: GoogleFonts.manrope(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade400,
+                    color: isDark ? Colors.white38 : Colors.grey.shade400,
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -347,11 +356,15 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
     required String subtitle,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade100;
+    
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: borderColor),
       ),
       child: Material(
         color: Colors.transparent,
@@ -365,12 +378,12 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
-                    color: Colors.grey.shade700,
+                    color: isDark ? Colors.white70 : Colors.grey.shade700,
                     size: 24,
                   ),
                 ),
@@ -384,7 +397,7 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                         style: GoogleFonts.manrope(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -392,7 +405,7 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                         subtitle,
                         style: GoogleFonts.manrope(
                           fontSize: 13,
-                          color: Colors.grey.shade500,
+                          color: isDark ? Colors.white54 : Colors.grey.shade500,
                         ),
                       ),
                     ],
@@ -400,7 +413,7 @@ class _AdminSettingsScreenState extends State<_AdminSettingsScreen> {
                 ),
                 Icon(
                   Icons.chevron_right,
-                  color: Colors.grey.shade400,
+                  color: isDark ? Colors.white24 : Colors.grey.shade400,
                 ),
               ],
             ),

@@ -15,11 +15,13 @@ class AdminDashboardScreen extends StatelessWidget {
     final viewModel = Provider.of<AdminViewModel>(context);
     final barbers = viewModel.barbers;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Theme.of(context).primaryColor,
         title: Text(
           'BarberFlow Admin',
           style: GoogleFonts.poppins(
@@ -66,10 +68,9 @@ class AdminDashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.08)),
-
+                border: Border.all(color: isDark ? Colors.white10 : Theme.of(context).primaryColor.withValues(alpha: 0.08)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,6 +83,7 @@ class AdminDashboardScreen extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       Switch(
@@ -96,7 +98,7 @@ class AdminDashboardScreen extends StatelessWidget {
                   Text(
                     'Accepting walk-ins and appointments',
                     style: GoogleFonts.poppins(
-                      color: Colors.grey.shade600,
+                      color: isDark ? Colors.white70 : Colors.grey.shade600,
                       fontSize: 14,
                     ),
                   ),
@@ -150,14 +152,13 @@ class AdminDashboardScreen extends StatelessWidget {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.08)),
-
+                    border: Border.all(color: isDark ? Colors.white10 : Theme.of(context).primaryColor.withValues(alpha: 0.08)),
                   ),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.grey.shade200,
+                      backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
                       backgroundImage: barber.profilePic != null && barber.profilePic!.isNotEmpty
                           ? NetworkImage(
                               barber.profilePic!.startsWith('http')
@@ -166,7 +167,7 @@ class AdminDashboardScreen extends StatelessWidget {
                             )
                           : null,
                       child: barber.profilePic == null || barber.profilePic!.isEmpty
-                          ? const Icon(Icons.person, color: Colors.grey)
+                          ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey)
                           : null,
                     ),
                     title: Text(
@@ -174,12 +175,13 @@ class AdminDashboardScreen extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     subtitle: barber.details != null
                         ? Text(
                             barber.details!,
-                            style: GoogleFonts.poppins(color: Colors.grey.shade600),
+                            style: GoogleFonts.poppins(color: isDark ? Colors.white70 : Colors.grey.shade600),
                           )
                         : null,
                     trailing: Container(
@@ -211,6 +213,8 @@ class AdminDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard(BuildContext context, String title, String value, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -236,7 +240,7 @@ class AdminDashboardScreen extends StatelessWidget {
             Text(
               title,
               style: GoogleFonts.poppins(
-                color: Colors.grey.shade700,
+                color: isDark ? Colors.white70 : Colors.grey.shade700,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),

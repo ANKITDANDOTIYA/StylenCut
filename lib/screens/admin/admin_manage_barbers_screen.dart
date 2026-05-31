@@ -365,13 +365,23 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade200;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           'Manage Barbers',
-          style: GoogleFonts.manrope(fontWeight: FontWeight.w800),
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        foregroundColor: isDark ? Colors.white : Colors.black87,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -401,15 +411,15 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundColor: Colors.grey.shade200,
+                      backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
                       backgroundImage: barber['profile_pic'] != null && barber['profile_pic'].toString().isNotEmpty
                           ? NetworkImage(
                               barber['profile_pic'].toString().startsWith('http')
@@ -418,7 +428,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                             )
                           : null,
                       child: barber['profile_pic'] == null || barber['profile_pic'].toString().isEmpty
-                          ? const Icon(Icons.person, color: Colors.grey, size: 30)
+                          ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey, size: 30)
                           : null,
                     ),
                     const SizedBox(width: 16),
@@ -433,6 +443,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                             style: GoogleFonts.manrope(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -441,7 +452,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                               Text(
                                 '${barber['experience'] ?? 0} yrs exp',
                                 style: GoogleFonts.manrope(
-                                  color: Colors.grey.shade600,
+                                  color: isDark ? Colors.white70 : Colors.grey.shade600,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -452,7 +463,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                                 height: 4,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey.shade400,
+                                  color: isDark ? Colors.white24 : Colors.grey.shade400,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -461,7 +472,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                               Text(
                                 '${barber['rating'] ?? '5.0'}',
                                 style: GoogleFonts.manrope(
-                                  color: Colors.grey.shade700,
+                                  color: isDark ? Colors.white70 : Colors.grey.shade700,
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -472,7 +483,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                           Text(
                             '${barber['cuttings_count'] ?? 0} cuts completed',
                             style: GoogleFonts.manrope(
-                              color: Colors.grey.shade600,
+                              color: isDark ? Colors.white70 : Colors.grey.shade600,
                               fontSize: 13,
                             ),
                           ),
