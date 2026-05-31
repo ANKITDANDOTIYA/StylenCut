@@ -384,6 +384,8 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                                           barber: barber,
                                                           salonName: widget.salon.name,
                                                           salonId: widget.salon.id,
+                                                          openingTime: widget.salon.openingTime,
+                                                          closingTime: widget.salon.closingTime,
                                                         ),
                                                       ),
                                                     );

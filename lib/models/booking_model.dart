@@ -5,6 +5,7 @@ class BookingModel {
   final String customerName;
   final String serviceName;
   final String time;
+  final String? bookingDate;
   final double price;
   final String barberName;
   final String status;
@@ -18,6 +19,7 @@ class BookingModel {
     required this.customerName,
     required this.serviceName,
     required this.time,
+    this.bookingDate,
     required this.price,
     required this.barberName,
     this.status = 'Pending',
@@ -33,6 +35,7 @@ class BookingModel {
       customerName: json['customer_name'] ?? '',
       serviceName: json['service_name'] ?? '',
       time: json['booking_time'] ?? '',
+      bookingDate: json['booking_date'] ?? '',
       price: double.tryParse(json['price']?.toString() ?? '0.0') ?? 0.0,
       barberName: json['barber_name'] ?? '',
       status: json['status'] ?? 'Pending',
@@ -46,7 +49,7 @@ class BookingModel {
     return {
       'customerName': customerName,
       'serviceName': serviceName,
-      'bookingDate': DateTime.now().toIso8601String().split('T')[0], // Use today's date formatted as YYYY-MM-DD
+      'bookingDate': bookingDate ?? DateTime.now().toIso8601String().split('T')[0],
       'bookingTime': time,
       'price': price,
       'barberName': barberName,
