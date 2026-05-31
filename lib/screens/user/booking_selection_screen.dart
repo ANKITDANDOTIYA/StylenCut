@@ -270,6 +270,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Book Appointment'),
@@ -292,8 +293,8 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                       margin: const EdgeInsets.only(bottom: 20),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF3CD), // Warm amber background
-                        border: Border.all(color: const Color(0xFFFFEBAA), width: 1.5),
+                        color: isDark ? const Color(0xFF332701) : const Color(0xFFFFF3CD), // Warm amber background
+                        border: Border.all(color: isDark ? const Color(0xFF664D03) : const Color(0xFFFFEBAA), width: 1.5),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -304,7 +305,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                             child: Text(
                               'This barber is currently ${widget.barber['status'] ?? 'Unavailable'}. You cannot book them at the moment.',
                               style: GoogleFonts.poppins(
-                                color: const Color(0xFF856404),
+                                color: isDark ? const Color(0xFFFFE69C) : const Color(0xFF856404),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -319,7 +320,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor: Colors.grey.shade200,
+                        backgroundColor: isDark ? const Color(0xFF2E2E2E) : Colors.grey.shade200,
                         backgroundImage: widget.barber['profile_pic'] != null && widget.barber['profile_pic']!.isNotEmpty
                             ? NetworkImage(
                                 widget.barber['profile_pic']!.startsWith('http')
@@ -347,7 +348,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                             Text(
                               '${widget.salonName} • ${widget.barber['experience'] ?? '0'} yrs exp',
                               style: GoogleFonts.poppins(
-                                color: Colors.grey.shade600,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                                 fontSize: 14,
                               ),
                             ),
@@ -443,11 +444,11 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade200,
+                            color: isSelected ? Theme.of(context).primaryColor : (isDark ? Colors.grey.shade900 : Colors.grey.shade200),
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(12),
-                          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.05) : Colors.white,
+                          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.08) : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -466,7 +467,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                   Text(
                                     '${service['duration']} • ${service['desc']}',
                                     style: GoogleFonts.poppins(
-                                      color: Colors.grey.shade600,
+                                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -509,11 +510,17 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                               builder: (context, child) {
                                 return Theme(
                                   data: Theme.of(context).copyWith(
-                                    colorScheme: ColorScheme.light(
-                                      primary: Theme.of(context).primaryColor,
-                                      onPrimary: Colors.white,
-                                      onSurface: Colors.black87,
-                                    ),
+                                    colorScheme: isDark
+                                        ? ColorScheme.dark(
+                                            primary: Theme.of(context).primaryColor,
+                                            onPrimary: Colors.white,
+                                            onSurface: Colors.white70,
+                                          )
+                                        : ColorScheme.light(
+                                            primary: Theme.of(context).primaryColor,
+                                            onPrimary: Colors.white,
+                                            onSurface: Colors.black87,
+                                          ),
                                   ),
                                   child: child!,
                                 );
@@ -549,9 +556,9 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                               margin: const EdgeInsets.only(right: 12),
                               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                               decoration: BoxDecoration(
-                                color: isSelected ? Theme.of(context).primaryColor : Colors.white,
+                                color: isSelected ? Theme.of(context).primaryColor : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
                                 border: Border.all(
-                                  color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade200,
+                                  color: isSelected ? Theme.of(context).primaryColor : (isDark ? Colors.grey.shade900 : Colors.grey.shade200),
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -561,7 +568,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                   Text(
                                     monthName,
                                     style: GoogleFonts.poppins(
-                                      color: isSelected ? Colors.white70 : Colors.grey.shade600,
+                                      color: isSelected ? Colors.white70 : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -571,14 +578,14 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: isSelected ? Colors.white : Colors.black,
+                                      color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     dayName,
                                     style: GoogleFonts.poppins(
-                                      color: isSelected ? Colors.white70 : Colors.grey.shade600,
+                                      color: isSelected ? Colors.white70 : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -612,19 +619,19 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(24),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
+                                  color: isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: Colors.grey.shade200),
+                                  border: Border.all(color: isDark ? Colors.grey.shade900 : Colors.grey.shade200),
                                 ),
                                 child: Column(
                                   children: [
-                                    Icon(Icons.event_busy, color: Colors.grey.shade400, size: 40),
+                                    Icon(Icons.event_busy, color: isDark ? Colors.grey.shade600 : Colors.grey.shade400, size: 40),
                                     const SizedBox(height: 12),
                                     Text(
                                       'No Slots Available',
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.grey.shade600,
+                                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -632,7 +639,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                       'Try selecting another date or service.',
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
-                                        color: Colors.grey.shade500,
+                                        color: isDark ? Colors.grey.shade500 : Colors.grey.shade500,
                                       ),
                                     ),
                                   ],
@@ -653,9 +660,9 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                       width: (MediaQuery.of(context).size.width - 48 - 24) / 3,
                                       padding: const EdgeInsets.symmetric(vertical: 12),
                                       decoration: BoxDecoration(
-                                        color: isSelected ? Theme.of(context).primaryColor : Colors.white,
+                                        color: isSelected ? Theme.of(context).primaryColor : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
                                         border: Border.all(
-                                          color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade200,
+                                          color: isSelected ? Theme.of(context).primaryColor : (isDark ? Colors.grey.shade900 : Colors.grey.shade200),
                                         ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
@@ -663,7 +670,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                       child: Text(
                                         _timeSlots[index],
                                         style: GoogleFonts.poppins(
-                                          color: isSelected ? Colors.white : Colors.black87,
+                                          color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
                                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                         ),
                                       ),
@@ -684,9 +691,14 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       maxLines: 3,
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                       decoration: InputDecoration(
                         hintText: 'Any special requests for the barber...',
-                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                        hintStyle: TextStyle(color: isDark ? Colors.grey.shade600 : Colors.grey.shade400),
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade50,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: isDark ? BorderSide(color: Colors.grey.shade900) : BorderSide.none),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: isDark ? BorderSide(color: Colors.grey.shade900) : BorderSide.none),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -698,9 +710,9 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
             // Bottom Bar
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                 border: Border(
-                  top: BorderSide(color: Colors.grey.shade200),
+                  top: BorderSide(color: isDark ? Colors.grey.shade900 : Colors.grey.shade200),
                 ),
               ),
               child: SafeArea(
@@ -715,7 +727,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                           Text(
                             'Total Price',
                             style: GoogleFonts.poppins(
-                              color: Colors.grey.shade600,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                               fontSize: 14,
                             ),
                           ),
@@ -724,6 +736,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                             style: GoogleFonts.poppins(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ],

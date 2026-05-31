@@ -49,18 +49,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 28,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 24),
                         
                         // Search Bar
                         TextField(
+                          style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87),
                           decoration: InputDecoration(
                             hintText: 'Search for salons, services...',
-                            hintStyle: TextStyle(color: Colors.grey.shade400),
+                            hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade500 : Colors.grey.shade400),
                             prefixIcon: const Icon(Icons.search, color: Colors.grey),
                             filled: true,
-                            fillColor: Colors.grey.shade50,
+                            fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -99,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.poppins(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
+                                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                               ),
                             ),
                             Text(
@@ -147,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.grey.shade200),
+                                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,6 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
+                                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                                                   ),
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
@@ -200,6 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     style: GoogleFonts.poppins(
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 14,
+                                                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                                                     ),
                                                   ),
                                                 ],
@@ -280,19 +285,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFilterChip(String label, {bool isSelected = false, required BuildContext context}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade300,
+          color: isSelected ? Theme.of(context).primaryColor : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
         ),
       ),
       child: Text(
         label,
         style: GoogleFonts.poppins(
-          color: isSelected ? Colors.white : Colors.black87,
+          color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           fontSize: 14,
         ),

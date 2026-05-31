@@ -150,4 +150,51 @@ exports.updateProfilePic = async (req, res) => {
         });
     }
 };
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { userId, currentPassword, newPassword } = req.body;
+        const pool = require('../config/db');
+
+        const parsedUserId = parseInt(userId, 10);
+        if (isNaN(parsedUserId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid User ID format"
+            });
+        }
+
+        const userQuery = await pool.query("SELECT * FROM users WHERE id = $1", [parsedUserId]);
+        if (userQuery.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const user = userQuery.rows[0];
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Incorrect current password"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await pool.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, parsedUserId]);
+
+        res.status(200).json({
+            success: true,
+            message: "Password changed successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+};
     

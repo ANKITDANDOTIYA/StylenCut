@@ -55,7 +55,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                 'Your appointment has been successfully scheduled. We\'ve sent a confirmation email.',
                 style: GoogleFonts.poppins(
                   fontSize: 16,
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
@@ -74,9 +74,9 @@ class BookingConfirmationScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                 ),
                 child: Row(
                   children: [
@@ -84,10 +84,10 @@ class BookingConfirmationScreen extends StatelessWidget {
                       height: 80,
                       width: 80,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2E2E2E) : Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.storefront, color: Colors.grey, size: 32),
+                      child: Icon(Icons.storefront, color: Theme.of(context).brightness == Brightness.dark ? Colors.white60 : Colors.grey, size: 32),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -114,7 +114,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                             '${bookingDetails['barber']} • ${bookingDetails['date']}, ${bookingDetails['time']}',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: Colors.grey.shade500,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade500,
                             ),
                           ),
                         ],
@@ -134,9 +134,9 @@ class BookingConfirmationScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildSummaryRow('Salon', bookingDetails['salonName'] ?? 'The Gilded Razor'),
-              _buildSummaryRow('Barber', bookingDetails['barber'] ?? 'Marcus Thorne'),
-              _buildSummaryRow('Date & Time', '${bookingDetails['date']}, ${bookingDetails['time']}'),
+              _buildSummaryRow(context, 'Salon', bookingDetails['salonName'] ?? 'The Gilded Razor'),
+              _buildSummaryRow(context, 'Barber', bookingDetails['barber'] ?? 'Marcus Thorne'),
+              _buildSummaryRow(context, 'Date & Time', '${bookingDetails['date']}, ${bookingDetails['time']}'),
               const Divider(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,7 +190,7 @@ class BookingConfirmationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryRow(String label, String value) {
+  Widget _buildSummaryRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
@@ -199,7 +199,7 @@ class BookingConfirmationScreen extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.poppins(
-              color: Colors.grey.shade600,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600,
               fontSize: 14,
             ),
           ),

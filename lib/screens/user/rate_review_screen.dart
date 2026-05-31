@@ -30,7 +30,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF121212) : Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('Rate & Review'),
         leading: IconButton(
@@ -47,9 +47,9 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,19 +66,19 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                     'Barber: ${widget.booking['barber']}',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
-                      color: Colors.grey.shade700,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade700,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today, size: 14, color: Colors.grey.shade500),
+                      Icon(Icons.calendar_today, size: 14, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade500),
                       const SizedBox(width: 4),
                       Text(
                         widget.booking['date'] ?? 'Oct 12, 2023',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: Colors.grey.shade500,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade500,
                         ),
                       ),
                     ],
@@ -109,7 +109,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                   icon: Icon(
                     index < _salonRating ? Icons.star : Icons.star_border,
                     size: 40,
-                    color: index < _salonRating ? Colors.amber : Colors.grey.shade300,
+                    color: index < _salonRating ? Colors.amber : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade300),
                   ),
                 );
               }),
@@ -118,18 +118,19 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
             TextField(
               controller: _salonCommentController,
               maxLines: 3,
+              style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87),
               decoration: InputDecoration(
                 hintText: 'Share your experience at the salon...',
-                hintStyle: TextStyle(color: Colors.grey.shade400),
+                hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade400),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
+                  borderSide: BorderSide(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
+                  borderSide: BorderSide(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                 ),
               ),
             ),
@@ -156,7 +157,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
                   icon: Icon(
                     index < _barberRating ? Icons.star : Icons.star_border,
                     size: 40,
-                    color: index < _barberRating ? Colors.amber : Colors.grey.shade300,
+                    color: index < _barberRating ? Colors.amber : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade300),
                   ),
                 );
               }),
@@ -165,18 +166,19 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
             TextField(
               controller: _barberCommentController,
               maxLines: 3,
+              style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87),
               decoration: InputDecoration(
                 hintText: 'How was your haircut?',
-                hintStyle: TextStyle(color: Colors.grey.shade400),
+                hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade400),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
+                  borderSide: BorderSide(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
+                  borderSide: BorderSide(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                 ),
               ),
             ),

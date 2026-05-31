@@ -45,7 +45,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF121212) : Colors.grey.shade50,
       appBar: AppBar(
         title: Text(
           'My Bookings',
@@ -74,8 +74,8 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                             children: [
                               CircleAvatar(
                                 radius: 40,
-                                backgroundColor: Colors.grey.shade100,
-                                child: Icon(Icons.calendar_today, size: 40, color: Colors.grey.shade400),
+                                backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
+                                child: Icon(Icons.calendar_today, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade400),
                               ),
                               const SizedBox(height: 20),
                               Text(
@@ -83,7 +83,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade800,
+                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade800,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -111,9 +111,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                           margin: const EdgeInsets.only(bottom: 20),
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey.shade200),
+                            border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +161,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                               Text(
                                 booking.salonName.isNotEmpty ? booking.salonName : 'Premium Barber Shop',
                                 style: GoogleFonts.poppins(
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600,
                                   fontSize: 16,
                                 ),
                               ),
@@ -175,7 +175,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                     children: [
                                       CircleAvatar(
                                         radius: 20,
-                                        backgroundColor: Colors.grey.shade100,
+                                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2E2E2E) : Colors.grey.shade100,
                                         backgroundImage: booking.barberProfilePic != null && booking.barberProfilePic!.isNotEmpty
                                             ? NetworkImage(
                                                 booking.barberProfilePic!.startsWith('http')
@@ -195,7 +195,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                             'Barber',
                                             style: GoogleFonts.poppins(
                                               fontSize: 12,
-                                              color: Colors.grey.shade500,
+                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade500,
                                             ),
                                           ),
                                           Text(

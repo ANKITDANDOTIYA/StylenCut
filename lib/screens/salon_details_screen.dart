@@ -47,9 +47,9 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child: CircleAvatar(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -99,6 +99,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             fontSize: 32,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                           ),
                         ),
                       ),
@@ -271,12 +272,12 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey.shade100, width: 1.5),
+                                border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade100, width: 1.5),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
+                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.02),
                                     blurRadius: 12,
                                     offset: const Offset(0, 4),
                                   ),
@@ -317,7 +318,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 17,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -343,7 +344,7 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                                                 style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 13,
-                                                  color: Colors.grey.shade800,
+                                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade300 : Colors.grey.shade800,
                                                 ),
                                               ),
                                               const SizedBox(width: 6),
