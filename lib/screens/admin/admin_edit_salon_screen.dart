@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,8 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
   late TextEditingController _openingTimeController;
   late TextEditingController _closingTimeController;
   
-  File? _selectedImageFile;
+  Uint8List? _selectedImageBytes;
+  String? _selectedImageName;
 
   @override
   void initState() {
@@ -54,19 +56,65 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
     return '${AppConstants.backendUrl}$path';
   }
 
+  Future<ImageSource?> _showImageSourcePicker() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Select Image Source',
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Color(0xFFC19A6B)),
+              title: Text(
+                'Gallery / Laptop Files',
+                style: GoogleFonts.manrope(color: isDark ? Colors.white70 : Colors.black87),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFFC19A6B)),
+              title: Text(
+                'Take Photo (Camera)',
+                style: GoogleFonts.manrope(color: isDark ? Colors.white70 : Colors.black87),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickImage() async {
     try {
+      final source = await _showImageSourcePicker();
+      if (source == null) return;
+
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 1024,
         maxHeight: 1024,
         imageQuality: 85,
       );
 
       if (image != null) {
+        final bytes = await image.readAsBytes();
         setState(() {
-          _selectedImageFile = File(image.path);
+          _selectedImageBytes = bytes;
+          _selectedImageName = image.name;
         });
       }
     } catch (e) {
@@ -85,9 +133,9 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
       
       String? thumbnailPath = widget.salon.thumbnailPic;
 
-      // Upload image first if a new one was selected
-      if (_selectedImageFile != null) {
-        final uploadedUrl = await viewModel.uploadSalonThumbnail(_selectedImageFile!.path);
+      // Upload image first if a new one was selected using raw bytes
+      if (_selectedImageBytes != null) {
+        final uploadedUrl = await viewModel.uploadSalonThumbnail(null, bytes: _selectedImageBytes, filename: _selectedImageName);
         if (uploadedUrl == null) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -124,9 +172,9 @@ class _AdminEditSalonScreenState extends State<AdminEditSalonScreen> {
   }
 
   Widget _buildImagePreview() {
-    if (_selectedImageFile != null) {
-      return Image.file(
-        _selectedImageFile!,
+    if (_selectedImageBytes != null) {
+      return Image.memory(
+        _selectedImageBytes!,
         fit: BoxFit.cover,
       );
     }

@@ -82,19 +82,21 @@ class AdminStatusModal extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
-                  radius: 24,
-                  backgroundImage: barber.profilePic != null && barber.profilePic!.isNotEmpty
-                      ? NetworkImage(
-                          barber.profilePic!.startsWith('http')
-                              ? barber.profilePic!
-                              : '${AppConstants.backendUrl}${barber.profilePic}',
-                        )
-                      : null,
-                  child: barber.profilePic == null || barber.profilePic!.isEmpty
-                      ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey)
-                      : null,
+                ClipOval(
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    color: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
+                    child: barber.profilePic != null && barber.profilePic!.isNotEmpty
+                        ? Image.network(
+                            barber.profilePic!.startsWith('http')
+                                ? barber.profilePic!
+                                : '${AppConstants.backendUrl}${barber.profilePic}',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey),
+                          )
+                        : Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Column(

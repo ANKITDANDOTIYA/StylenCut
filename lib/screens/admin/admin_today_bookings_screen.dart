@@ -165,19 +165,21 @@ class AdminTodayBookingsScreen extends StatelessWidget {
                       // Middle Section: Customer profile & status badge
                       Row(
                         children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.grey.shade100,
-                            backgroundImage: booking.customerProfilePic != null && booking.customerProfilePic!.isNotEmpty
-                                ? NetworkImage(
-                                    booking.customerProfilePic!.startsWith('http')
-                                        ? booking.customerProfilePic!
-                                        : '${AppConstants.backendUrl}${booking.customerProfilePic}',
-                                  )
-                                : null,
-                            child: booking.customerProfilePic == null || booking.customerProfilePic!.isEmpty
-                                ? const Icon(Icons.person, color: Colors.grey)
-                                : null,
+                          ClipOval(
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              color: Colors.grey.shade100,
+                              child: booking.customerProfilePic != null && booking.customerProfilePic!.isNotEmpty
+                                  ? Image.network(
+                                      booking.customerProfilePic!.startsWith('http')
+                                          ? booking.customerProfilePic!
+                                          : '${AppConstants.backendUrl}${booking.customerProfilePic}',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.grey),
+                                    )
+                                  : const Icon(Icons.person, color: Colors.grey),
+                            ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(

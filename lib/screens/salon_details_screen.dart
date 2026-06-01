@@ -85,27 +85,25 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 250,
-                    decoration: BoxDecoration(
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      height: 250,
                       color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(20),
-                      image: widget.salon.thumbnailPic != null && widget.salon.thumbnailPic!.isNotEmpty
-                          ? DecorationImage(
-                              image: NetworkImage(
-                                widget.salon.thumbnailPic!.startsWith('http')
-                                    ? widget.salon.thumbnailPic!
-                                    : '${AppConstants.backendUrl}${widget.salon.thumbnailPic}',
-                              ),
+                      child: widget.salon.thumbnailPic != null && widget.salon.thumbnailPic!.isNotEmpty
+                          ? Image.network(
+                              widget.salon.thumbnailPic!.startsWith('http')
+                                  ? widget.salon.thumbnailPic!
+                                  : '${AppConstants.backendUrl}${widget.salon.thumbnailPic}',
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Center(
+                                child: Icon(Icons.storefront, size: 80, color: Colors.grey),
+                              ),
                             )
-                          : null,
+                          : const Center(
+                              child: Icon(Icons.storefront, size: 80, color: Colors.grey),
+                            ),
                     ),
-                    child: widget.salon.thumbnailPic == null || widget.salon.thumbnailPic!.isEmpty
-                        ? const Center(
-                            child: Icon(Icons.storefront, size: 80, color: Colors.grey),
-                          )
-                        : null,
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -212,24 +210,20 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
           // Salon Cover Image Header
           Container(
             height: 300,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              image: widget.salon.thumbnailPic != null && widget.salon.thumbnailPic!.isNotEmpty
-                  ? DecorationImage(
-                      image: NetworkImage(
-                        widget.salon.thumbnailPic!.startsWith('http')
-                            ? widget.salon.thumbnailPic!
-                            : '${AppConstants.backendUrl}${widget.salon.thumbnailPic}',
-                      ),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: widget.salon.thumbnailPic == null || widget.salon.thumbnailPic!.isEmpty
-                ? const Center(
-                    child: Icon(Icons.storefront, size: 80, color: Colors.grey),
+            color: Colors.grey.shade300,
+            child: widget.salon.thumbnailPic != null && widget.salon.thumbnailPic!.isNotEmpty
+                ? Image.network(
+                    widget.salon.thumbnailPic!.startsWith('http')
+                        ? widget.salon.thumbnailPic!
+                        : '${AppConstants.backendUrl}${widget.salon.thumbnailPic}',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Center(
+                      child: Icon(Icons.storefront, size: 80, color: Colors.grey),
+                    ),
                   )
-                : null,
+                : const Center(
+                    child: Icon(Icons.storefront, size: 80, color: Colors.grey),
+                  ),
           ),
           
           // Salon Content
@@ -447,19 +441,21 @@ class _SalonDetailsScreenState extends State<SalonDetailsScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.1), width: 2),
                         ),
-                        child: CircleAvatar(
-                          radius: 28,
-                          backgroundColor: Colors.grey.shade100,
-                          backgroundImage: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
-                              ? NetworkImage(
-                                  barber['profile_pic']!.startsWith('http')
-                                      ? barber['profile_pic']!
-                                      : '${AppConstants.backendUrl}${barber['profile_pic']}',
-                                )
-                              : null,
-                          child: barber['profile_pic'] == null || barber['profile_pic']!.isEmpty
-                              ? const Icon(Icons.person, color: Colors.grey)
-                              : null,
+                        child: ClipOval(
+                          child: Container(
+                            width: 56,
+                            height: 56,
+                            color: Colors.grey.shade100,
+                            child: barber['profile_pic'] != null && barber['profile_pic']!.isNotEmpty
+                                ? Image.network(
+                                    barber['profile_pic']!.startsWith('http')
+                                        ? barber['profile_pic']!
+                                        : '${AppConstants.backendUrl}${barber['profile_pic']}',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.grey),
+                                  )
+                                : const Icon(Icons.person, color: Colors.grey),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),

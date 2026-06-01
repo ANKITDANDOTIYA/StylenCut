@@ -147,13 +147,13 @@ class SalonService {
     }
   }
 
-  static Future<String?> uploadThumbnail(String filePath) async {
+  static Future<String?> uploadThumbnail(String? filePath, {List<int>? bytes, String? filename}) async {
     try {
       final uri = Uri.parse('$baseUrl/upload');
       final request = http.MultipartRequest('POST', uri);
       
-      // Resolve content type from file extension
-      final extension = filePath.split('.').last.toLowerCase();
+      final String name = filename ?? (filePath != null ? filePath.split(RegExp(r'[/\\]')).last : 'image.jpg');
+      final extension = name.split('.').last.toLowerCase();
       String mimeType = 'image/jpeg';
       if (extension == 'png') {
         mimeType = 'image/png';
@@ -163,15 +163,28 @@ class SalonService {
         mimeType = 'image/gif';
       }
 
-      print('Uploading file $filePath as $mimeType to $uri');
+      print('Uploading file $name as $mimeType to $uri');
       
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'thumbnail', 
-          filePath,
-          contentType: MediaType.parse(mimeType),
-        ),
-      );
+      if (bytes != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'thumbnail', 
+            bytes,
+            filename: name,
+            contentType: MediaType.parse(mimeType),
+          ),
+        );
+      } else if (filePath != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'thumbnail', 
+            filePath,
+            contentType: MediaType.parse(mimeType),
+          ),
+        );
+      } else {
+        return null;
+      }
 
       final streamedResponse = await request.send().timeout(const Duration(seconds: 15));
       final response = await http.Response.fromStream(streamedResponse);

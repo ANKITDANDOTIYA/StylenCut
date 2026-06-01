@@ -62,11 +62,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<ImageSource?> _showImageSourcePicker() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Select Image Source',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Color(0xFFC19A6B)),
+              title: Text(
+                'Gallery / Laptop Files',
+                style: GoogleFonts.poppins(color: isDark ? Colors.white70 : Colors.black87),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFFC19A6B)),
+              title: Text(
+                'Take Photo (Camera)',
+                style: GoogleFonts.poppins(color: isDark ? Colors.white70 : Colors.black87),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickAndUploadProfilePic() async {
     try {
+      final source = await _showImageSourcePicker();
+      if (source == null) return;
+
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 512,
         maxHeight: 512,
         imageQuality: 85,
@@ -78,8 +122,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isUploadingPic = true;
       });
 
-      // Upload using SalonService
-      final uploadedUrl = await SalonService.uploadThumbnail(image.path);
+      // Load raw bytes and name for cross-platform upload
+      final bytes = await image.readAsBytes();
+      final name = image.name;
+
+      // Upload using SalonService with raw bytes
+      final uploadedUrl = await SalonService.uploadThumbnail(null, bytes: bytes, filename: name);
 
       if (uploadedUrl != null) {
         await AuthService.saveUserProfilePic(uploadedUrl);
@@ -814,26 +862,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         ),
                                       )
-                                    : CircleAvatar(
-                                        radius: 42,
-                                        backgroundColor: primaryColor.withOpacity(0.1),
-                                        backgroundImage: _userProfilePic != null && _userProfilePic!.isNotEmpty
-                                            ? NetworkImage(
-                                                _userProfilePic!.startsWith('http')
-                                                    ? _userProfilePic!
-                                                    : '${AppConstants.backendUrl}$_userProfilePic',
-                                              )
-                                            : null,
-                                        child: _userProfilePic == null || _userProfilePic!.isEmpty
-                                            ? Text(
-                                                _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 36,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: primaryColor,
+                                    : ClipOval(
+                                        child: Container(
+                                          width: 84,
+                                          height: 84,
+                                          color: primaryColor.withOpacity(0.1),
+                                          child: _userProfilePic != null && _userProfilePic!.isNotEmpty
+                                              ? Image.network(
+                                                  _userProfilePic!.startsWith('http')
+                                                      ? _userProfilePic!
+                                                      : '${AppConstants.backendUrl}$_userProfilePic',
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error, stackTrace) => Center(
+                                                    child: Text(
+                                                      _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 36,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: primaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Center(
+                                                  child: Text(
+                                                    _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 36,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: primaryColor,
+                                                    ),
+                                                  ),
                                                 ),
-                                              )
-                                            : null,
+                                        ),
                                       ),
                               ),
                               if (!_isUploadingPic)

@@ -176,20 +176,22 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          CircleAvatar(
-                                            radius: 20,
-                                            backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2E2E2E) : Colors.grey.shade100,
-                                            backgroundImage: booking.barberProfilePic != null && booking.barberProfilePic!.isNotEmpty
-                                                ? NetworkImage(
-                                                    booking.barberProfilePic!.startsWith('http')
-                                                        ? booking.barberProfilePic!
-                                                        : '${AppConstants.backendUrl}${booking.barberProfilePic}',
-                                                  )
-                                                : null,
-                                            child: booking.barberProfilePic == null || booking.barberProfilePic!.isEmpty
-                                                ? const Icon(Icons.person, color: Colors.grey, size: 20)
-                                                : null,
-                                          ),
+                                           ClipOval(
+                                             child: Container(
+                                               width: 40,
+                                               height: 40,
+                                               color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2E2E2E) : Colors.grey.shade100,
+                                               child: booking.barberProfilePic != null && booking.barberProfilePic!.isNotEmpty
+                                                   ? Image.network(
+                                                       booking.barberProfilePic!.startsWith('http')
+                                                           ? booking.barberProfilePic!
+                                                           : '${AppConstants.backendUrl}${booking.barberProfilePic}',
+                                                       fit: BoxFit.cover,
+                                                       errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.grey, size: 20),
+                                                     )
+                                                   : const Icon(Icons.person, color: Colors.grey, size: 20),
+                                             ),
+                                           ),
                                           const SizedBox(width: 12),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,

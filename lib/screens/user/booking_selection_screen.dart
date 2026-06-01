@@ -322,19 +322,21 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                   // Barber Info
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: isDark ? const Color(0xFF2E2E2E) : Colors.grey.shade200,
-                        backgroundImage: widget.barber['profile_pic'] != null && widget.barber['profile_pic']!.isNotEmpty
-                            ? NetworkImage(
-                                widget.barber['profile_pic']!.startsWith('http')
-                                    ? widget.barber['profile_pic']!
-                                    : '${AppConstants.backendUrl}${widget.barber['profile_pic']}',
-                              )
-                            : null,
-                        child: widget.barber['profile_pic'] == null || widget.barber['profile_pic']!.isEmpty
-                            ? const Icon(Icons.person, color: Colors.grey)
-                            : null,
+                      ClipOval(
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          color: isDark ? const Color(0xFF2E2E2E) : Colors.grey.shade200,
+                          child: widget.barber['profile_pic'] != null && widget.barber['profile_pic']!.isNotEmpty
+                              ? Image.network(
+                                  widget.barber['profile_pic']!.startsWith('http')
+                                      ? widget.barber['profile_pic']!
+                                      : '${AppConstants.backendUrl}${widget.barber['profile_pic']}',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.grey),
+                                )
+                              : const Icon(Icons.person, color: Colors.grey),
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(

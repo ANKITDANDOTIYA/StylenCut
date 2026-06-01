@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -33,12 +33,54 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
     }
   }
 
+  Future<ImageSource?> _showImageSourcePicker() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Select Image Source',
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Color(0xFFC19A6B)),
+              title: Text(
+                'Gallery / Laptop Files',
+                style: GoogleFonts.manrope(color: isDark ? Colors.white70 : Colors.black87),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFFC19A6B)),
+              title: Text(
+                'Take Photo (Camera)',
+                style: GoogleFonts.manrope(color: isDark ? Colors.white70 : Colors.black87),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showAddBarberDialog() {
     final nameController = TextEditingController();
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final experienceController = TextEditingController();
-    File? pickedImage;
+    Uint8List? pickedImageBytes;
+    String? pickedImageName;
 
     showDialog(
       context: context,
@@ -57,16 +99,21 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                     GestureDetector(
                       onTap: () async {
                         try {
+                          final source = await _showImageSourcePicker();
+                          if (source == null) return;
+                          
                           final ImagePicker picker = ImagePicker();
                           final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
+                            source: source,
                             maxWidth: 512,
                             maxHeight: 512,
                             imageQuality: 85,
                           );
                           if (image != null) {
+                            final bytes = await image.readAsBytes();
                             setDialogState(() {
-                              pickedImage = File(image.path);
+                              pickedImageBytes = bytes;
+                              pickedImageName = image.name;
                             });
                           }
                         } catch (e) {
@@ -76,13 +123,15 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          CircleAvatar(
-                            radius: 45,
-                            backgroundColor: Colors.grey.shade100,
-                            backgroundImage: pickedImage != null ? FileImage(pickedImage!) : null,
-                            child: pickedImage == null
-                                ? Icon(Icons.person_add_alt_1_outlined, size: 36, color: Colors.grey.shade400)
-                                : null,
+                          ClipOval(
+                            child: Container(
+                              width: 90,
+                              height: 90,
+                              color: Colors.grey.shade100,
+                              child: pickedImageBytes != null
+                                  ? Image.memory(pickedImageBytes!, fit: BoxFit.cover)
+                                  : const Icon(Icons.person_add_alt_1_outlined, size: 36, color: Colors.grey),
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.all(6),
@@ -145,8 +194,8 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                     final viewModel = Provider.of<SalonViewModel>(context, listen: false);
                     if (viewModel.adminSalon != null) {
                       String? profilePicUrl;
-                      if (pickedImage != null) {
-                        final uploadedUrl = await viewModel.uploadSalonThumbnail(pickedImage!.path);
+                      if (pickedImageBytes != null) {
+                        final uploadedUrl = await viewModel.uploadSalonThumbnail(null, bytes: pickedImageBytes, filename: pickedImageName);
                         profilePicUrl = uploadedUrl;
                       }
 
@@ -200,22 +249,14 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
     final nameController = TextEditingController(text: barber['name']);
     final emailController = TextEditingController(text: barber['email']);
     final experienceController = TextEditingController(text: barber['experience']?.toString() ?? '');
-    File? pickedImage;
+    Uint8List? pickedImageBytes;
+    String? pickedImageName;
 
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            ImageProvider? imageProvider;
-            if (pickedImage != null) {
-              imageProvider = FileImage(pickedImage!);
-            } else if (barber['profile_pic'] != null && barber['profile_pic'].toString().isNotEmpty) {
-              final path = barber['profile_pic'].toString();
-              final url = path.startsWith('http') ? path : '${AppConstants.backendUrl}$path';
-              imageProvider = NetworkImage(url);
-            }
-
             return AlertDialog(
               title: Text(
                 'Edit Barber Details',
@@ -228,16 +269,21 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                     GestureDetector(
                       onTap: () async {
                         try {
+                          final source = await _showImageSourcePicker();
+                          if (source == null) return;
+                          
                           final ImagePicker picker = ImagePicker();
                           final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
+                            source: source,
                             maxWidth: 512,
                             maxHeight: 512,
                             imageQuality: 85,
                           );
                           if (image != null) {
+                            final bytes = await image.readAsBytes();
                             setDialogState(() {
-                              pickedImage = File(image.path);
+                              pickedImageBytes = bytes;
+                              pickedImageName = image.name;
                             });
                           }
                         } catch (e) {
@@ -247,13 +293,23 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
-                          CircleAvatar(
-                            radius: 45,
-                            backgroundColor: Colors.grey.shade100,
-                            backgroundImage: imageProvider,
-                            child: imageProvider == null
-                                ? Icon(Icons.person_outline, size: 36, color: Colors.grey.shade400)
-                                : null,
+                          ClipOval(
+                            child: Container(
+                              width: 90,
+                              height: 90,
+                              color: Colors.grey.shade100,
+                              child: pickedImageBytes != null
+                                  ? Image.memory(pickedImageBytes!, fit: BoxFit.cover)
+                                  : (barber['profile_pic'] != null && barber['profile_pic'].toString().isNotEmpty
+                                      ? Image.network(
+                                          barber['profile_pic'].toString().startsWith('http')
+                                              ? barber['profile_pic'].toString()
+                                              : '${AppConstants.backendUrl}${barber['profile_pic']}',
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) => Icon(Icons.person_outline, size: 36, color: Colors.grey.shade400),
+                                        )
+                                      : Icon(Icons.person_outline, size: 36, color: Colors.grey.shade400)),
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.all(6),
@@ -313,8 +369,8 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
                       if (barberId == null) return;
 
                       String? profilePicUrl = barber['profile_pic'];
-                      if (pickedImage != null) {
-                        final uploadedUrl = await viewModel.uploadSalonThumbnail(pickedImage!.path);
+                      if (pickedImageBytes != null) {
+                        final uploadedUrl = await viewModel.uploadSalonThumbnail(null, bytes: pickedImageBytes, filename: pickedImageName);
                         profilePicUrl = uploadedUrl;
                       }
                       

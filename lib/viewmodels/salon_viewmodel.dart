@@ -90,11 +90,11 @@ class SalonViewModel extends ChangeNotifier {
     return barber != null;
   }
 
-  Future<String?> uploadSalonThumbnail(String filePath) async {
+  Future<String?> uploadSalonThumbnail(String? filePath, {List<int>? bytes, String? filename}) async {
     _isLoading = true;
     notifyListeners();
 
-    final uploadedUrl = await SalonService.uploadThumbnail(filePath);
+    final uploadedUrl = await SalonService.uploadThumbnail(filePath, bytes: bytes, filename: filename);
 
     _isLoading = false;
     notifyListeners();

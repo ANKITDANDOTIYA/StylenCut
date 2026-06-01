@@ -206,9 +206,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? (salon.thumbnailPic!.startsWith('http')
                             ? salon.thumbnailPic!
                             : '${AppConstants.backendUrl}${salon.thumbnailPic}')
-                        : 'https://images.unsplash.com/photo-1521590832167-7bfc17484d8d?q=80&w=2070&auto=format&fit=crop',
+                        : 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
                   ),
                   fit: BoxFit.cover,
+                  onError: (exception, stackTrace) {
+                    debugPrint('Error loading salon image: $exception');
+                  },
                 ),
               ),
             ),
@@ -271,18 +274,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Icon(Icons.schedule, size: 16, color: Theme.of(context).primaryColor),
                       const SizedBox(width: 4),
-                      Text(
-                        salon.openingTime != null && salon.closingTime != null
-                            ? '${salon.openingTime} - ${salon.closingTime}'
-                            : 'Hours not set',
-                        style: GoogleFonts.poppins(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Text(
+                          salon.openingTime != null && salon.closingTime != null
+                              ? '${salon.openingTime} - ${salon.closingTime}'
+                              : 'Hours not set',
+                          style: GoogleFonts.poppins(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      if (salon.isOpen)
+                      if (salon.isOpen) ...[
+                        const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
@@ -298,6 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
+                      ],
                     ],
                   ),
                 ],

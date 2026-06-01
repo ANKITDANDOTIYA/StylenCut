@@ -42,12 +42,18 @@ class AdminDashboardScreen extends StatelessWidget {
               builder: (context, snapshot) {
                 final picPath = snapshot.data;
                 if (picPath != null && picPath.isNotEmpty) {
-                  return CircleAvatar(
-                    backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(
-                      picPath.startsWith('http')
-                          ? picPath
-                          : '${AppConstants.backendUrl}$picPath',
+                  return ClipOval(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      color: Colors.white.withValues(alpha: 0.15),
+                      child: Image.network(
+                        picPath.startsWith('http')
+                            ? picPath
+                            : '${AppConstants.backendUrl}$picPath',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.admin_panel_settings, color: Colors.white),
+                      ),
                     ),
                   );
                 }
@@ -177,18 +183,21 @@ class AdminDashboardScreen extends StatelessWidget {
                     border: Border.all(color: isDark ? Colors.white10 : Theme.of(context).primaryColor.withValues(alpha: 0.08)),
                   ),
                   child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
-                      backgroundImage: barber.profilePic != null && barber.profilePic!.isNotEmpty
-                          ? NetworkImage(
-                              barber.profilePic!.startsWith('http')
-                                  ? barber.profilePic!
-                                  : '${AppConstants.backendUrl}${barber.profilePic}',
-                            )
-                          : null,
-                      child: barber.profilePic == null || barber.profilePic!.isEmpty
-                          ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey)
-                          : null,
+                    leading: ClipOval(
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        color: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
+                        child: barber.profilePic != null && barber.profilePic!.isNotEmpty
+                            ? Image.network(
+                                barber.profilePic!.startsWith('http')
+                                    ? barber.profilePic!
+                                    : '${AppConstants.backendUrl}${barber.profilePic}',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey, size: 24),
+                              )
+                            : Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey, size: 24),
+                      ),
                     ),
                     title: Text(
                       barber.name,
