@@ -25,22 +25,22 @@ A premium, boutique grooming booking and scheduling platform built with Flutter.
 
 ## 🏗️ Architecture
 
-StylenCut is built on a clean **Model-View-ViewModel (MVVM)** design pattern, separating business logic, network request orchestration, and layout design.
+BarberFlow follows the **MVVM (Model-View-ViewModel)** architectural pattern to ensure separation of concerns and maintainability.
 
 ```mermaid
 graph TD
-    subgraph View Layer (Flutter UI Widgets)
-        A[main.dart] --> B[Screens / Widgets]
-        B -->|Listens & Dispatches| C[ViewModels (Provider)]
+    subgraph "View Layer (Flutter UI Widgets)"
+        A["main.dart"] --> B["Screens / Widgets"]
+        B -->|Listens & Dispatches| C["ViewModels (Provider)"]
     end
 
-    subgraph Business Logic Layer (State Management)
-        C -->|Retrieves & Maps| D[Models / Data Structures]
-        C -->|Orchestrates Requests| E[Services (Network/Auth)]
+    subgraph "Business Logic Layer (State Management)"
+        C -->|Retrieves & Maps| D["Models / Data Structures"]
+        C -->|Orchestrates Requests| E["Services (Network/Auth)"]
     end
 
-    subgraph Infrastructure / Backend
-        E -->|HTTP Multipart / JSON| F[Backend API / Database]
+    subgraph "Infrastructure / Backend"
+        E -->|HTTP Multipart / JSON| F["Backend API / Database"]
     end
     
     style B fill:#f9f,stroke:#333,stroke-width:2px
