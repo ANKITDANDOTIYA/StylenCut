@@ -4,6 +4,7 @@ import 'package:barber_flow/screens/user/booking_confirmation_screen.dart';
 import 'package:barber_flow/services/auth_service.dart';
 import 'package:barber_flow/services/booking_service.dart';
 import 'package:barber_flow/models/booking_model.dart';
+import 'package:barber_flow/theme/responsive_layout.dart';
 import '../../constants.dart';
 
 class BookingSelectionScreen extends StatefulWidget {
@@ -279,8 +280,11 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
+      body: CenteredBox(
+        maxWidth: 750,
+        padding: EdgeInsets.zero,
+        child: Column(
+          children: [
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
@@ -657,7 +661,9 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
                                       });
                                     },
                                     child: Container(
-                                      width: (MediaQuery.of(context).size.width - 48 - 24) / 3,
+                                      width: MediaQuery.of(context).size.width < 600
+                                          ? (MediaQuery.of(context).size.width - 72) / 3
+                                          : 110,
                                       padding: const EdgeInsets.symmetric(vertical: 12),
                                       decoration: BoxDecoration(
                                         color: isSelected ? Theme.of(context).primaryColor : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
@@ -841,6 +847,7 @@ class _BookingSelectionScreenState extends State<BookingSelectionScreen> {
             ),
         ],
       ),
+     ),
     );
   }
 }

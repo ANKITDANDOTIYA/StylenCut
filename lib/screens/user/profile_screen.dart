@@ -728,47 +728,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final _darkMode = context.watch<ThemeViewModel>().isDarkMode;
     final primaryColor = Theme.of(context).primaryColor;
 
+    final cardWidth = MediaQuery.of(context).size.width >= 700
+        ? 700.0 - 48.0
+        : MediaQuery.of(context).size.width - 48.0;
+
     return Scaffold(
       backgroundColor: _darkMode ? const Color(0xFF121212) : Colors.grey.shade50,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header Curve & User Profile Summary Card
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 700),
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                const SizedBox(
-                  height: 330,
-                  width: double.infinity,
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 190,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          primaryColor,
-                          primaryColor.withOpacity(0.85),
-                        ],
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(40),
-                        bottomRight: Radius.circular(40),
+                // Header Curve & User Profile Summary Card
+                Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 330,
+                      width: double.infinity,
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 190,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              primaryColor,
+                              primaryColor.withOpacity(0.85),
+                            ],
+                          ),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(40),
+                            bottomRight: Radius.circular(40),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  top: 110,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 48,
-                    padding: const EdgeInsets.all(24),
+                    Positioned(
+                      top: 110,
+                      child: Container(
+                        width: cardWidth,
+                        padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: _darkMode ? const Color(0xFF1E1E1E) : Colors.white,
                       borderRadius: BorderRadius.circular(28),
@@ -1119,6 +1126,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
+    ),
+    ),
     );
   }
 

@@ -42,98 +42,105 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-              // Main Logo / Title area
-              Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'BarberFlow',
-                    style: GoogleFonts.poppins(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).primaryColor,
-                      letterSpacing: -1,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Find a barber, instantly.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  const Spacer(),
+                  // Main Logo / Title area
+                  Column(
                     children: [
-                      Icon(
-                        Icons.verified,
-                        color: Theme.of(context).primaryColor,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 8),
                       Text(
-                        'Verified Professional grooming network',
+                        'BarberFlow',
+                        style: GoogleFonts.poppins(
+                          fontSize: 48,
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).primaryColor,
+                          letterSpacing: -1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Find a barber, instantly.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.verified,
+                            color: Theme.of(context).primaryColor,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Verified Professional grooming network',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: isDark ? Colors.white54 : Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  // Loading section
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 4,
+                        width: 200,
+                        child: LinearProgressIndicator(
+                          value: 0.65, // Static for now, as per design 65%
+                          backgroundColor: isDark ? const Color(0xFF2E2E2E) : Colors.grey[200],
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Initialising',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '65%',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: Colors.black54,
+                          color: isDark ? Colors.white54 : Colors.black54,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ],
               ),
-              const Spacer(),
-              // Loading section
-              Column(
-                children: [
-                  SizedBox(
-                    height: 4,
-                    width: 200,
-                    child: LinearProgressIndicator(
-                      value: 0.65, // Static for now, as per design 65%
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Initialising',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '65%',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),

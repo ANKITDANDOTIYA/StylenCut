@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/screens/main_screen.dart';
+import 'package:barber_flow/theme/responsive_layout.dart';
 
 class BookingConfirmationScreen extends StatelessWidget {
   final Map<String, dynamic> bookingDetails;
@@ -18,8 +19,11 @@ class BookingConfirmationScreen extends StatelessWidget {
         automaticallyImplyLeading: false, // Prevents backing out to selection
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+        child: CenteredBox(
+          maxWidth: 600,
+          padding: EdgeInsets.zero,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -187,6 +191,7 @@ class BookingConfirmationScreen extends StatelessWidget {
           ),
         ),
       ),
+     ),
     );
   }
 

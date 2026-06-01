@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../viewmodels/salon_viewmodel.dart';
 import '../../viewmodels/admin_viewmodel.dart';
+import '../../theme/responsive_layout.dart';
 import '../../constants.dart';
 
 class AdminManageBarbersScreen extends StatefulWidget {
@@ -373,7 +374,7 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Manage Barbers',
+          'Barber Directory',
           style: GoogleFonts.manrope(
             fontWeight: FontWeight.w800,
             color: isDark ? Colors.white : Colors.black87,
@@ -389,119 +390,145 @@ class _AdminManageBarbersScreenState extends State<AdminManageBarbersScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: _barbersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Failed to load barbers'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No barbers found. Add some!'));
-          }
+      body: CenteredBox(
+        maxWidth: 900,
+        padding: EdgeInsets.zero,
+        child: FutureBuilder<List<dynamic>>(
+          future: _barbersFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Failed to load barbers'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No barbers found. Add some!'));
+            }
 
-          final barbers = snapshot.data!;
+            final barbers = snapshot.data!;
+            final isWide = MediaQuery.of(context).size.width >= 650;
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(24.0),
-            itemCount: barbers.length,
-            itemBuilder: (context, index) {
-              final barber = barbers[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: borderColor),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
-                      backgroundImage: barber['profile_pic'] != null && barber['profile_pic'].toString().isNotEmpty
-                          ? NetworkImage(
-                              barber['profile_pic'].toString().startsWith('http')
-                                  ? barber['profile_pic'].toString()
-                                  : '${AppConstants.backendUrl}${barber['profile_pic']}',
-                            )
-                          : null,
-                      child: barber['profile_pic'] == null || barber['profile_pic'].toString().isEmpty
-                          ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey, size: 30)
-                          : null,
+            return isWide
+                ? GridView.builder(
+                    padding: const EdgeInsets.all(24.0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width >= 950 ? 3 : 2,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      mainAxisExtent: 104,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            barber['name'] ?? 'Unknown',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.manrope(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Text(
-                                '${barber['experience'] ?? 0} yrs exp',
-                                style: GoogleFonts.manrope(
-                                  color: isDark ? Colors.white70 : Colors.grey.shade600,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 4,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isDark ? Colors.white24 : Colors.grey.shade400,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.star, color: Colors.amber, size: 14),
-                              const SizedBox(width: 2),
-                              Text(
-                                '${barber['rating'] ?? '5.0'}',
-                                style: GoogleFonts.manrope(
-                                  color: isDark ? Colors.white70 : Colors.grey.shade700,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${barber['cuttings_count'] ?? 0} cuts completed',
-                            style: GoogleFonts.manrope(
-                              color: isDark ? Colors.white70 : Colors.grey.shade600,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
+                    itemCount: barbers.length,
+                    itemBuilder: (context, index) {
+                      final barber = barbers[index];
+                      return _buildBarberItem(context, barber, cardColor, borderColor, true);
+                    },
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(24.0),
+                    itemCount: barbers.length,
+                    itemBuilder: (context, index) {
+                      final barber = barbers[index];
+                      return _buildBarberItem(context, barber, cardColor, borderColor, false);
+                    },
+                  );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarberItem(BuildContext context, dynamic barber, Color cardColor, Color borderColor, bool isGrid) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: isGrid ? EdgeInsets.zero : const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200,
+            backgroundImage: barber['profile_pic'] != null && barber['profile_pic'].toString().isNotEmpty
+                ? NetworkImage(
+                    barber['profile_pic'].toString().startsWith('http')
+                        ? barber['profile_pic'].toString()
+                        : '${AppConstants.backendUrl}${barber['profile_pic']}',
+                  )
+                : null,
+            child: barber['profile_pic'] == null || barber['profile_pic'].toString().isEmpty
+                ? Icon(Icons.person, color: isDark ? Colors.white54 : Colors.grey, size: 28)
+                : null,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  barber['name'] ?? 'Unknown',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.manrope(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      '${barber['experience'] ?? 0} yrs exp',
+                      style: GoogleFonts.manrope(
+                        color: isDark ? Colors.white70 : Colors.grey.shade600,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () {
-                        _showEditBarberDialog(barber);
-                      },
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark ? Colors.white24 : Colors.grey.shade400,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(Icons.star, color: Colors.amber, size: 12),
+                    const SizedBox(width: 2),
+                    Text(
+                      '${barber['rating'] ?? '5.0'}',
+                      style: GoogleFonts.manrope(
+                        color: isDark ? Colors.white70 : Colors.grey.shade700,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
-              );
+                const SizedBox(height: 2),
+                Text(
+                  '${barber['cuttings_count'] ?? 0} cuts completed',
+                  style: GoogleFonts.manrope(
+                    color: isDark ? Colors.white70 : Colors.grey.shade500,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.more_vert, size: 20),
+            onPressed: () {
+              _showEditBarberDialog(barber);
             },
-          );
-        },
+          ),
+        ],
       ),
     );
   }

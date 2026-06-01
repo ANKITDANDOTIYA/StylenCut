@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
+import 'package:barber_flow/theme/responsive_layout.dart';
 import '../../constants.dart';
 
 class AdminTodayBookingsScreen extends StatelessWidget {
@@ -67,11 +68,14 @@ class AdminTodayBookingsScreen extends StatelessWidget {
         foregroundColor: isDark ? Colors.white : Colors.black87,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: CenteredBox(
+        maxWidth: 850,
+        padding: EdgeInsets.zero,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Date Indicator
             Text(
               'Oct 24, 2023',
@@ -280,6 +284,7 @@ class AdminTodayBookingsScreen extends StatelessWidget {
             ),
           ],
         ),
+       ),
       ),
     );
   }

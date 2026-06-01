@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:barber_flow/screens/admin/admin_status_modal.dart';
 import 'package:barber_flow/viewmodels/admin_viewmodel.dart';
 import 'package:barber_flow/services/auth_service.dart';
+import 'package:barber_flow/theme/responsive_layout.dart';
 import '../../constants.dart';
 
 
@@ -59,11 +60,14 @@ class AdminDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      body: CenteredBox(
+        maxWidth: 950,
+        padding: EdgeInsets.zero,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
             // Shop Status Section
             Container(
               padding: const EdgeInsets.all(20),
@@ -103,21 +107,37 @@ class AdminDashboardScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      _buildStatCard(context, 'Today\'s Bookings', viewModel.todaysBookingsCount.toString(), Icons.calendar_today),
-                      const SizedBox(width: 16),
-                      _buildStatCard(context, 'Sales Total', '\$${viewModel.salesTotal.toStringAsFixed(2)}', Icons.attach_money),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      _buildStatCard(context, 'Waitlist', viewModel.waitlistCount.toString(), Icons.people_outline),
-                      const SizedBox(width: 16),
-                      _buildStatCard(context, 'Avg Rating', viewModel.avgRating.toString(), Icons.star_border),
-                    ],
-                  ),
+                  MediaQuery.of(context).size.width >= 750
+                      ? Row(
+                          children: [
+                            _buildStatCard(context, 'Today\'s Bookings', viewModel.todaysBookingsCount.toString(), Icons.calendar_today),
+                            const SizedBox(width: 16),
+                            _buildStatCard(context, 'Sales Total', '\$${viewModel.salesTotal.toStringAsFixed(2)}', Icons.attach_money),
+                            const SizedBox(width: 16),
+                            _buildStatCard(context, 'Waitlist', viewModel.waitlistCount.toString(), Icons.people_outline),
+                            const SizedBox(width: 16),
+                            _buildStatCard(context, 'Avg Rating', viewModel.avgRating.toString(), Icons.star_border),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Row(
+                              children: [
+                                _buildStatCard(context, 'Today\'s Bookings', viewModel.todaysBookingsCount.toString(), Icons.calendar_today),
+                                const SizedBox(width: 16),
+                                _buildStatCard(context, 'Sales Total', '\$${viewModel.salesTotal.toStringAsFixed(2)}', Icons.attach_money),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                _buildStatCard(context, 'Waitlist', viewModel.waitlistCount.toString(), Icons.people_outline),
+                                const SizedBox(width: 16),
+                                _buildStatCard(context, 'Avg Rating', viewModel.avgRating.toString(), Icons.star_border),
+                              ],
+                            ),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -208,6 +228,7 @@ class AdminDashboardScreen extends StatelessWidget {
             ),
           ],
         ),
+       ),
       ),
     );
   }

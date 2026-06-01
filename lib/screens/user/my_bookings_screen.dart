@@ -59,187 +59,192 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadBookings,
-              child: _bookings.isEmpty
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.25),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
-                                child: Icon(Icons.calendar_today, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade400),
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                'No Bookings Yet',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade800,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Book a slot at a salon to see it here!',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  : ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(24.0),
-                      itemCount: _bookings.length,
-                      itemBuilder: (context, index) {
-                        final booking = _bookings[index];
-                        final isCompleted = booking.status == 'Completed';
-
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  onRefresh: _loadBookings,
+                  child: _bookings.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                            Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      booking.time,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
+                                    child: Icon(Icons.calendar_today, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade400),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'No Bookings Yet',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade800,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: isCompleted ? Colors.green.shade50 : Colors.orange.shade50,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      isCompleted ? 'Completed' : 'Upcoming',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: isCompleted ? Colors.green.shade700 : Colors.orange.shade700,
-                                      ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Book a slot at a salon to see it here!',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade500,
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                booking.serviceName,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(24.0),
+                          itemCount: _bookings.length,
+                          itemBuilder: (context, index) {
+                            final booking = _bookings[index];
+                            final isCompleted = booking.status == 'Completed';
+
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                booking.salonName.isNotEmpty ? booking.salonName : 'Premium Barber Shop',
-                                style: GoogleFonts.poppins(
-                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              const Divider(),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      CircleAvatar(
-                                        radius: 20,
-                                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2E2E2E) : Colors.grey.shade100,
-                                        backgroundImage: booking.barberProfilePic != null && booking.barberProfilePic!.isNotEmpty
-                                            ? NetworkImage(
-                                                booking.barberProfilePic!.startsWith('http')
-                                                    ? booking.barberProfilePic!
-                                                    : '${AppConstants.backendUrl}${booking.barberProfilePic}',
-                                              )
-                                            : null,
-                                        child: booking.barberProfilePic == null || booking.barberProfilePic!.isEmpty
-                                            ? const Icon(Icons.person, color: Colors.grey, size: 20)
-                                            : null,
+                                      Expanded(
+                                        child: Text(
+                                          booking.time,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                        ),
                                       ),
-                                      const SizedBox(width: 12),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Barber',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 12,
-                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade500,
-                                            ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: isCompleted ? Colors.green.shade50 : Colors.orange.shade50,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          isCompleted ? 'Completed' : 'Upcoming',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: isCompleted ? Colors.green.shade700 : Colors.orange.shade700,
                                           ),
-                                          Text(
-                                            booking.barberName,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  if (isCompleted)
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => RateReviewScreen(
-                                              booking: {
-                                                'salonId': booking.salonId,
-                                                'salon': booking.salonName.isNotEmpty ? booking.salonName : 'Premium Barber Shop',
-                                                'barber': booking.barberName,
-                                                'date': booking.time,
-                                              },
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    booking.serviceName,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    booking.salonName.isNotEmpty ? booking.salonName : 'Premium Barber Shop',
+                                    style: GoogleFonts.poppins(
+                                      color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Divider(),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2E2E2E) : Colors.grey.shade100,
+                                            backgroundImage: booking.barberProfilePic != null && booking.barberProfilePic!.isNotEmpty
+                                                ? NetworkImage(
+                                                    booking.barberProfilePic!.startsWith('http')
+                                                        ? booking.barberProfilePic!
+                                                        : '${AppConstants.backendUrl}${booking.barberProfilePic}',
+                                                  )
+                                                : null,
+                                            child: booking.barberProfilePic == null || booking.barberProfilePic!.isEmpty
+                                                ? const Icon(Icons.person, color: Colors.grey, size: 20)
+                                                : null,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Barber',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade500,
+                                                ),
+                                              ),
+                                              Text(
+                                                booking.barberName,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      if (isCompleted)
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => RateReviewScreen(
+                                                  booking: {
+                                                    'salonId': booking.salonId,
+                                                    'salon': booking.salonName.isNotEmpty ? booking.salonName : 'Premium Barber Shop',
+                                                    'barber': booking.barberName,
+                                                    'date': booking.time,
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'Rate',
+                                            style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        );
-                                      },
-                                      child: Text(
-                                        'Rate',
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    )
+                                        )
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-            ),
+                            );
+                          },
+                        ),
+                ),
+          ),
+        ),
     );
   }
 }

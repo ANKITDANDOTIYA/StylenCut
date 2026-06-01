@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:barber_flow/services/auth_service.dart';
 import 'package:barber_flow/services/salon_service.dart';
+import 'package:barber_flow/theme/responsive_layout.dart';
 
 class RateReviewScreen extends StatefulWidget {
   final Map<String, dynamic> booking;
@@ -38,9 +39,12 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
+      body: CenteredBox(
+        maxWidth: 600,
+        padding: EdgeInsets.zero,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Booking Info
@@ -247,6 +251,7 @@ class _RateReviewScreenState extends State<RateReviewScreen> {
             ),
           ],
         ),
+       ),
       ),
     );
   }
