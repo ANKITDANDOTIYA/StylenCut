@@ -15,6 +15,7 @@ class ThemeViewModel extends ChangeNotifier {
     
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isDarkMode', value);
+    
   }
   
 }
