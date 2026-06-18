@@ -4,7 +4,7 @@ const { findUserByEmail, createUser } = require('../models/authModel');
 
 const pool = require('../config/db');
 
-// SIGNUP
+ 
 
 exports.signup = async (req, res) => {
     const client = await pool.connect();
@@ -33,7 +33,7 @@ exports.signup = async (req, res) => {
 
         await client.query('BEGIN');
 
-        // Insert new user
+       
         const userResult = await client.query(
             `INSERT INTO users (name, email, password, role)
              VALUES ($1, $2, $3, $4) RETURNING *`,
@@ -87,7 +87,7 @@ exports.signup = async (req, res) => {
 };
 
 
-    // ================= LOGIN =================
+    
 exports.login = async (req, res) => {
 
   try {
