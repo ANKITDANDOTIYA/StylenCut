@@ -10,6 +10,8 @@ const findUserByEmail = async (email) => {
     return result.rows[0];
 }
 
+// RETURNING * is used to return the newly created user record after insertion
+
 const createUser = async (name,
     email,
     password,
