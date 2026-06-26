@@ -27,6 +27,7 @@ const createUser = async (name,
     return result.rows[0];
  };
 
+//  getBarberBySaloon function retrieves all barbers associated with a specific salon, along with their average ratings and the number of completed bookings (cuttings) they have performed. It uses SQL joins to combine data from the users, reviews, and bookings tables, filtering for users with the role of 'barber' and grouping the results by user ID. The function returns an array of barber objects with their details, ratings, and cutting counts.
 const getBarbersBySalon = async (salonId) => {
     const result = await pool.query(
         `SELECT u.id, u.name, u.email, u.role, u.salon_id, u.experience, u.profile_pic, u.status, u.details,
