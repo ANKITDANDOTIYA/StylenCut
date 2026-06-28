@@ -62,6 +62,7 @@ const createBarberUser = async (name, email, password, salonId, experience = nul
     return result.rows[0];
 };
 
+// Update the profile picture of a user by their user ID. The function takes the user ID and the new profile picture URL as parameters, updates the corresponding record in the users table, and returns the updated user record.
 const updateUserProfilePic = async (userId, profilePic) => {
     const result = await pool.query(
         "UPDATE users SET profile_pic = $1 WHERE id = $2 RETURNING *",
