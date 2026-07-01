@@ -71,6 +71,8 @@ const updateUserProfilePic = async (userId, profilePic) => {
     return result.rows[0];
 };
 
+// Update profile
+
 const updateUserProfilePicByEmail = async (email, profilePic) => {
     const result = await pool.query(
         "UPDATE users SET profile_pic = $1 WHERE email = $2 RETURNING *",
