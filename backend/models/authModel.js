@@ -89,6 +89,8 @@ const updateUserName = async (userId, name) => {
     return result.rows[0];
 };
 
+// Exxport the functions
+
 module.exports = {
     findUserByEmail,
     createUser,
