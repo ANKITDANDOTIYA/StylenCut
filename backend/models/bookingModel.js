@@ -22,6 +22,8 @@ const getBookingsBySalon = async (salonId) => {
     return result.rows;
 };
 
+// Get all bookings for a specific customer by their name. The function takes the customer's name as a parameter, queries the bookings table to retrieve all bookings associated with that customer, and returns the results.
+
 const getBookingsByCustomer = async (customerName) => {
     const result = await pool.query(
         `SELECT b.*, s.name as salon_name, u.profile_pic as barber_profile_pic
