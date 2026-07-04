@@ -37,6 +37,8 @@ const getBookingsByCustomer = async (customerName) => {
     return result.rows;
 };
 
+// Update the status of a booking by its ID.
+
 const updateBookingStatus = async (bookingId, status) => {
     const result = await pool.query(
         `UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *`,
