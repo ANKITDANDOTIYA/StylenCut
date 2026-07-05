@@ -1,5 +1,7 @@
 const pool = require("../config/db");
 
+// Create a new booking in the database. The function takes various parameters such as salonId, customerName, serviceName, bookingDate, bookingTime, price, and barberName. It inserts a new record into the bookings table and returns the newly created booking.
+
 const createSalon = async (ownerId, name, data = {}) => {
     const { address = null, phone_number = null, opening_time = null, closing_time = null, thumbnail_pic = null } = data;
     const result = await pool.query(
