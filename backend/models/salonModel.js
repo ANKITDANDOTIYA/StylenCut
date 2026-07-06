@@ -13,6 +13,8 @@ const createSalon = async (ownerId, name, data = {}) => {
     return result.rows[0];
 };
 
+// getAllSalons retrieves all salons from the database along with their average rating and review count. It performs a LEFT JOIN with the reviews table to calculate the average rating and count of reviews for each salon. The results are grouped by salon ID and ordered in ascending order.
+
 const getAllSalons = async () => {
     const result = await pool.query(`
         SELECT s.*, 
