@@ -18,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String _userName = 'Guest Client';
-  String _userEmail = 'client@barberflow.com';
+  String _userEmail = 'client@stylencut.com';
   String _userRole = 'user';
   bool _isLoading = true;
 
@@ -626,9 +626,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildPolicySection('1. Information We Collect', 
                 'We collect information you provide directly to us when creating an account, making a booking, or contacting customer support. This includes your name, email address, phone number, and booking histories.'),
               _buildPolicySection('2. How We Use Your Information', 
-                'We use the collected information to schedule and manage your barber appointments, process payments, send confirmation notifications, and improve the BarberFlow application experience.'),
+                'We use the collected information to schedule and manage your barber appointments, process payments, send confirmation notifications, and improve the StylenCut application experience.'),
               _buildPolicySection('3. Information Sharing', 
-                'BarberFlow does not sell or lease your personal data. We only share information with salons and barbers with whom you make bookings to ensure they are prepared for your appointment.'),
+                'StylenCut does not sell or lease your personal data. We only share information with salons and barbers with whom you make bookings to ensure they are prepared for your appointment.'),
               _buildPolicySection('4. Security of Data', 
                 'We utilize industry-standard security protocols to encrypt and safeguard your personal information and booking details against unauthorized access or breaches.'),
             ],
@@ -666,7 +666,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showAboutBarberFlowDialog() {
+  void _showAboutStylenCutDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -684,7 +684,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              'BarberFlow',
+              'StylenCut',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.bold,
                 color: _darkMode ? Colors.white : Colors.black87,
@@ -715,7 +715,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'BarberFlow client-side app',
+              'StylenCut client-side app',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
@@ -731,7 +731,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'BarberFlow is a premium appointment scheduling and salon management platform. Discover the best local barbers, pick real-time open slots, and get a fresh cut with zero waiting time.',
+              'StylenCut is a premium appointment scheduling and salon management platform. Discover the best local barbers, pick real-time open slots, and get a fresh cut with zero waiting time.',
               textAlign: TextAlign.center,
               style: GoogleFonts.manrope(
                 fontSize: 13,
@@ -743,7 +743,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Divider(color: _darkMode ? Colors.grey.shade800 : Colors.grey.shade200),
             const SizedBox(height: 8),
             Text(
-              '© 2026 BarberFlow Inc. All rights reserved.',
+              '© 2026 StylenCut Inc. All rights reserved.',
               style: GoogleFonts.manrope(
                 fontSize: 11,
                 color: Colors.grey.shade400,
@@ -1135,8 +1135,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildSettingsTile(
                       icon: Icons.info_outline_rounded,
                       iconColor: Colors.indigo.shade600,
-                      title: 'About BarberFlow',
-                      onTap: _showAboutBarberFlowDialog,
+                      title: 'About StylenCut',
+                      onTap: _showAboutStylenCutDialog,
                     ),
                   ]),
  

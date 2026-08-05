@@ -24,7 +24,7 @@ class AdminDashboardScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: isDark ? const Color(0xFF1E1E1E) : Theme.of(context).primaryColor,
         title: Text(
-          'BarberFlow Admin',
+          'StylenCut Admin',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w800,
             color: Colors.white,

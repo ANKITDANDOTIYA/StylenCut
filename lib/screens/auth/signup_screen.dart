@@ -75,7 +75,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Join BarberFlow today',
+                    'Join StylenCut today',
                     style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),
