@@ -10,13 +10,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:barber_flow/main.dart';
 
 void main() {
-  testWidgets('BarberFlow builds successfully', (WidgetTester tester) async {
+  testWidgets('StylenCut builds successfully', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp(initialDarkMode: false));
     // Allow the 3 second Splash Screen timer to complete
     await tester.pumpAndSettle(const Duration(seconds: 4));
 
     // Verify that the app builds without crashing and shows the splash screen text.
-    expect(find.text('BarberFlow'), findsWidgets);
+    expect(find.text('StylenCut'), findsWidgets);
   });
 }

@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   Column(
                     children: [
                       Text(
-                        'BarberFlow',
+                        'StylenCut',
                         style: GoogleFonts.poppins(
                           fontSize: 48,
                           fontWeight: FontWeight.w800,
@@ -89,12 +89,14 @@ class _SplashScreenState extends State<SplashScreen> {
                             size: 16,
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            'Verified Professional grooming network',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: isDark ? Colors.white54 : Colors.black54,
-                              fontWeight: FontWeight.w500,
+                          Flexible(
+                            child: Text(
+                              'Verified Professional grooming network',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: isDark ? Colors.white54 : Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],

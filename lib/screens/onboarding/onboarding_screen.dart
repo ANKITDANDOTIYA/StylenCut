@@ -29,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       'title': 'Ready for a Fresh Cut?',
       'subtitle':
-          'Join the BarberFlow community and experience the future of barber booking. Your style, simplified.',
+          'Join the StylenCut community and experience the future of barber booking. Your style, simplified.',
       'icon': 'content_cut',
     },
   ];
@@ -88,7 +88,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'BarberFlow',
+                        'StylenCut',
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,

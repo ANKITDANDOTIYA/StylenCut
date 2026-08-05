@@ -1,4 +1,4 @@
-# StylenCut (BarberFlow)
+# StylenCut
 
 A premium, boutique grooming booking and scheduling platform built with Flutter. Designed with a custom antique warm-wood and brass aesthetic, StylenCut provides a seamless experience for clients to discover premium salons, pick timeslots, and schedule cuts, while offering salon owners and barbers a powerful, responsive admin portal to oversee daily bookings and live staff availability.
 
@@ -25,7 +25,7 @@ A premium, boutique grooming booking and scheduling platform built with Flutter.
 
 ## 🏗️ Architecture
 
-BarberFlow follows the **MVVM (Model-View-ViewModel)** architectural pattern to ensure separation of concerns and maintainability.
+StylenCut follows the **MVVM (Model-View-ViewModel)** architectural pattern to ensure separation of concerns and maintainability.
 
 ```mermaid
 graph TD

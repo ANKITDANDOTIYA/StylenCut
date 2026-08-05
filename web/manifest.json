@@ -1,6 +1,6 @@
 {
-    "name": "barber_flow",
-    "short_name": "barber_flow",
+    "name": "StylenCut",
+    "short_name": "StylenCut",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

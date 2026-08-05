@@ -100,7 +100,7 @@ class AuthService {
 
   static Future<String> getUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email') ?? 'client@barberflow.com';
+    return prefs.getString('email') ?? 'client@stylencut.com';
   }
 
   static Future<String?> getUserProfilePic() async {

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 
           
           return MaterialApp(
-            title: 'BarberFlow',
+            title: 'StylenCut',
             debugShowCheckedModeBanner: false,
             themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
             theme: ThemeData(
